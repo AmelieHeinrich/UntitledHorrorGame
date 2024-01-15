@@ -12,16 +12,17 @@ import "core:encoding/json"
 
 Config_File :: struct {
     data: json.Value,
+    file_contents: []u8,
     path: string,
 }
 
 config_file_load :: proc(file: ^Config_File, path: string) -> bool {
     data, ok := os.read_entire_file_from_filename(path)
     if !ok {
-        log.errorf("Failed to load config file of pâth %s", path)
+        log.errorf("Failed to load config file of path %s", path)
         return false
     }
-    defer delete(data)
+    file.file_contents = data
 
     json_data, err := json.parse(data)
     if err != .None {
@@ -52,4 +53,5 @@ config_file_destroy :: proc(file: ^Config_File) {
         log.errorf("Failed to write json string to file %s", file.path)
     }
     json.destroy_value(file.data)
+    delete(file.file_contents)
 }

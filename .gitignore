@@ -1,3 +1,7 @@
 # Build files
 
 build
+
+# Development environment/Unrelated game files
+
+gamedata/log.txt

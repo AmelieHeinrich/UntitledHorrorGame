@@ -19,9 +19,27 @@ Window_State :: struct {
     window: ^SDL.Window,
 };
 
+Config_Data :: struct {
+    renderer: struct {
+        vsync: bool,
+        api: string
+    },
+    version: struct {
+        minor: f32,
+        major: f32,
+        revision: f32
+    },
+    window: struct {
+        type: string,
+        width: f32,
+        height: f32
+    }
+};
+
 main :: proc() {
     window_state: Window_State;
     config_file: Config_File;
+    config_data: Config_Data;
 
     // Init logger
     handle, err := os.open("gamedata/log.txt", os.O_CREATE | os.O_TRUNC)
@@ -50,17 +68,20 @@ main :: proc() {
     defer config_file_destroy(&config_file)
 
     // Create window
-    root := config_file.data.(json.Object);
-    window_settings := root["window"].(json.Object)
+    json.unmarshal(config_file.file_contents, &config_data)
 
-    window_state.width = i32(window_settings["width"].(json.Float))
-    window_state.height = i32(window_settings["height"].(json.Float))
+    window_state.width = i32(config_data.window.width)
+    window_state.height = i32(config_data.window.height)
 
     SDL.Init({.VIDEO})
     defer SDL.Quit()
 
     window_state.window = SDL.CreateWindow("Duvet", SDL.WINDOWPOS_UNDEFINED, SDL.WINDOWPOS_UNDEFINED, window_state.width, window_state.height, {.OPENGL})
     defer SDL.DestroyWindow(window_state.window)
+    log.infof("Hello from Duvet! Current game version: %d.%d.%d",
+                i32(config_data.version.major),
+                i32(config_data.version.revision),
+                i32(config_data.version.minor))
     log.infof("Created window of title Duvet and of size (%d, %d)", window_state.width, window_state.height)
 
     // Main loop
