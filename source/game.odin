@@ -9,26 +9,68 @@ package duvet
 import "core:fmt"
 import "core:log"
 import "core:os"
+import "core:encoding/json"
 
-Program_Mode :: enum {
-    GAME
-}
+import SDL "vendor:sdl2"
+
+Window_State :: struct {
+    width: i32,
+    height: i32,
+    window: ^SDL.Window,
+};
 
 main :: proc() {
+    window_state: Window_State;
+    config_file: Config_File;
+
     // Init logger
-    handle, err := os.open("gamedata/log.txt", os.O_CREATE)
+    handle, err := os.open("gamedata/log.txt", os.O_CREATE | os.O_TRUNC)
     if err != 0 {
         fmt.eprintln("[ERROR] Failed to create log file!")
         return
     }
+    defer os.close(handle)
+
     console_logger := log.create_console_logger()
+    defer log.destroy_console_logger(console_logger)
+
     file_logger := log.create_file_logger(handle)
+    defer log.destroy_file_logger(&file_logger)
+
     multi_logger := log.create_multi_logger(console_logger, file_logger)
+    defer log.destroy_multi_logger(&multi_logger)
+
     context.logger = multi_logger
 
-    // Destroy logger
-    log.destroy_multi_logger(&multi_logger)
-    log.destroy_file_logger(&file_logger)
-    log.destroy_console_logger(console_logger)
-    os.close(handle)
+    // Init config file
+    if !config_file_load(&config_file, "gamedata/game_settings.json") {
+        log.error("Failed to load json settings file!")
+        return
+    }
+    defer config_file_destroy(&config_file)
+
+    // Create window
+    root := config_file.data.(json.Object);
+    window_settings := root["window"].(json.Object)
+
+    window_state.width = i32(window_settings["width"].(json.Float))
+    window_state.height = i32(window_settings["height"].(json.Float))
+
+    SDL.Init({.VIDEO})
+    defer SDL.Quit()
+
+    window_state.window = SDL.CreateWindow("Duvet", SDL.WINDOWPOS_UNDEFINED, SDL.WINDOWPOS_UNDEFINED, window_state.width, window_state.height, {.OPENGL})
+    defer SDL.DestroyWindow(window_state.window)
+    log.infof("Created window of title Duvet and of size (%d, %d)", window_state.width, window_state.height)
+
+    // Main loop
+    loop: for {
+        event: SDL.Event
+        for SDL.PollEvent(&event) {
+            #partial switch event.type {
+                case .QUIT:
+                    break loop
+            }
+        }
+    }
 }

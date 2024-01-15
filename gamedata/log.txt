@@ -1,2 +1,0 @@
-[INFO ] --- [2024-01-15 12:31:39] [game.odin:32:main()] Hello!!
-[INFO ] --- [2024-01-15 12:31:39] [game.odin:18:test()] caca!!
