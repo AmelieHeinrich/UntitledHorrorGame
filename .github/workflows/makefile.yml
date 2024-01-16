@@ -14,6 +14,8 @@ jobs:
     steps:
     - uses: laytan/setup-odin@v1
     - uses: actions/checkout@v3
+      with:
+        cache: false
 
     - name: Install dependencies
       run: sudo apt-get install libsdl2-2.0-0 libsdl2-dev
