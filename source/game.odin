@@ -133,6 +133,7 @@ do_game :: proc() {
 
     vbuffer := buffer_create(size_of(vertices), GpuBuffer_Type.VERTEX)
     defer buffer_free(&vbuffer)
+    buffer_bind(&vbuffer)
     buffer_upload(&vbuffer, size_of(vertices), &vertices[0], 0)
 
     input_layout_push_element(0, 3, size_of(f32) * 6, 0, Input_Layout_Element.FLOAT);
