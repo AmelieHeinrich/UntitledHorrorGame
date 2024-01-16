@@ -83,10 +83,10 @@ do_game :: proc() {
     SDL.Init({.VIDEO})
     defer SDL.Quit()
 
-    game.window.window = SDL.CreateWindow("Duvet", SDL.WINDOWPOS_UNDEFINED, SDL.WINDOWPOS_UNDEFINED, game.window.width, game.window.height, {.OPENGL})
+    game.window.window = SDL.CreateWindow("Untitled Horror Game", SDL.WINDOWPOS_UNDEFINED, SDL.WINDOWPOS_UNDEFINED, game.window.width, game.window.height, {.OPENGL})
     defer SDL.DestroyWindow(game.window.window)
 
-    log.debugf("Created window Duvet with dimensiosn (%d %d)", game.window.width, game.window.height)
+    log.debugf("Created window Untitled Horror Game with dimensiosn (%d %d)", game.window.width, game.window.height)
 
     // Init OpenGL Context
     opengl_context_init(&game.gl_ctx, game.window.window, game.config.renderer.vsync)
@@ -112,7 +112,7 @@ do_game :: proc() {
 
     // TODO(ahi): Init editor
 
-    log.infof("Hello from Duvet! Current game version: %d.%d.%d",
+    log.infof("Hello from Untitled Horror Game! Current game version: %d.%d.%d",
                 i32(game.config.version.major),
                 i32(game.config.version.revision),
                 i32(game.config.version.minor))

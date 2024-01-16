@@ -104,7 +104,6 @@ buffer_free :: proc(buffer: ^Gpu_Buffer) {
 }
 
 buffer_upload :: proc(buffer: ^Gpu_Buffer, size: int, data: rawptr, offset: int) {
-    buffer_bind(buffer)
     switch buffer.type {
         case .VERTEX:
             gl.BufferSubData(gl.ARRAY_BUFFER, offset, size, data)
