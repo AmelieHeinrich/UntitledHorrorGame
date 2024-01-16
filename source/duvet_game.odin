@@ -97,16 +97,46 @@ do_game :: proc() {
     defer event_system_free(&game.events)
 
     // TODO(ahi): Init input
+
+    // TODO(ahi): Init asset system
+
     // TODO(ahi): Init audio
+    
     // TODO(ahi): Init graphics
-    // TODO(ahi): Init GUI widgets
-    // TODO(ahi): Init editor
+    
+    // TODO(ahi): Init GUI
+    
+    // TODO(ahi): Init entity manager
+
     // TODO(ahi): Init game
+
+    // TODO(ahi): Init editor
 
     log.infof("Hello from Duvet! Current game version: %d.%d.%d",
                 i32(game.config.version.major),
                 i32(game.config.version.revision),
                 i32(game.config.version.minor))
+
+    // TEST TRIANGLE
+    vertices := [?]f32 {
+        -0.5, -0.5, 0.0, 1.0, 0.0, 0.0,
+         0.5, -0.5, 0.0, 0.0, 1.0, 0.0,
+         0.0,  0.5, 0.0, 0.0, 0.0, 1.0,
+    }
+
+    shaders := shader_create_standard("gamedata/shaders/triangle_vtx.glsl", "gamedata/shaders/triangle_frg.glsl")
+    defer shader_destroy(&shaders)
+
+    layout := input_layout_init()
+    defer input_layout_destroy(&layout)
+    input_layout_bind(&layout)
+
+    vbuffer := buffer_create(size_of(vertices), GpuBuffer_Type.VERTEX)
+    defer buffer_free(&vbuffer)
+    buffer_upload(&vbuffer, size_of(vertices), &vertices[0], 0)
+
+    input_layout_push_element(0, 3, size_of(f32) * 6, 0, Input_Layout_Element.FLOAT);
+    input_layout_push_element(1, 3, size_of(f32) * 6, size_of(f32) * 3, Input_Layout_Element.FLOAT);
 
     // Main loop
     loop: for {
@@ -117,6 +147,14 @@ do_game :: proc() {
                     break loop
             }
         }
+
+        context_clear()
+        context_clear_color(0.3, 0.5, 0.8, 1.0)
+        context_viewport(game.window.width, game.window.height)
+        shader_bind(&shaders)
+        input_layout_bind(&layout)
+        buffer_bind(&vbuffer)
+        context_draw(0, 3)
 
         opengl_context_present(&game.gl_ctx)
     }

@@ -7,6 +7,7 @@
 package duvet
 
 import "core:log"
+import "core:fmt"
 
 import gl "vendor:OpenGL"
 import SDL "vendor:sdl2"
