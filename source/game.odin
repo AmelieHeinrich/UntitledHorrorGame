@@ -37,11 +37,17 @@ Config_Data :: struct {
     }
 };
 
-do_game :: proc() {
-    window_state: Window_State;
-    config_file: Config_File;
-    config_data: Config_Data;
+Game_State :: struct {
+    config_file: Config_File,
+    config: Config_Data,
 
+    window: Window_State,
+    gl_ctx: OpenGL_Context,
+    events: Event_System,
+};
+
+do_game :: proc() {
+    game: Game_State;
     // Init logger
     handle, err := os.open("gamedata/log.txt", os.O_CREATE | os.O_TRUNC)
     if err != 0 {
@@ -62,37 +68,45 @@ do_game :: proc() {
     context.logger = multi_logger
 
     // Init config file
-    if !config_file_load(&config_file, "gamedata/game_settings.json") {
+    if !config_file_load(&game.config_file, "gamedata/game_settings.json") {
         log.error("Failed to load json settings file!")
         return
     }
-    defer config_file_destroy(&config_file)
+    defer config_file_destroy(&game.config_file)
 
     // Create window
-    json.unmarshal(config_file.file_contents, &config_data)
+    json.unmarshal(game.config_file.file_contents, &game.config)
 
-    window_state.width = i32(config_data.window.width)
-    window_state.height = i32(config_data.window.height)
+    game.window.width = i32(game.config.window.width)
+    game.window.height = i32(game.config.window.height)
 
     SDL.Init({.VIDEO})
     defer SDL.Quit()
 
-    window_state.window = SDL.CreateWindow("Duvet", SDL.WINDOWPOS_UNDEFINED, SDL.WINDOWPOS_UNDEFINED, window_state.width, window_state.height, {.OPENGL})
-    defer SDL.DestroyWindow(window_state.window)
+    game.window.window = SDL.CreateWindow("Duvet", SDL.WINDOWPOS_UNDEFINED, SDL.WINDOWPOS_UNDEFINED, game.window.width, game.window.height, {.OPENGL})
+    defer SDL.DestroyWindow(game.window.window)
 
-    log.infof("Hello from Duvet! Current game version: %d.%d.%d",
-                i32(config_data.version.major),
-                i32(config_data.version.revision),
-                i32(config_data.version.minor))
-    log.infof("Created window of title Duvet and of size (%d, %d)", window_state.width, window_state.height)
+    log.debugf("Created window Duvet with dimensiosn (%d %d)", game.window.width, game.window.height)
 
-    // TODO(ahi): Init event
+    // Init OpenGL Context
+    opengl_context_init(&game.gl_ctx, game.window.window, game.config.renderer.vsync)
+    defer opengl_context_destroy(&game.gl_ctx)
+
+    // Init event system
+    event_system_init(&game.events)
+    defer event_system_free(&game.events)
+
     // TODO(ahi): Init input
     // TODO(ahi): Init audio
     // TODO(ahi): Init graphics
     // TODO(ahi): Init GUI widgets
     // TODO(ahi): Init editor
     // TODO(ahi): Init game
+
+    log.infof("Hello from Duvet! Current game version: %d.%d.%d",
+                i32(game.config.version.major),
+                i32(game.config.version.revision),
+                i32(game.config.version.minor))
 
     // Main loop
     loop: for {
@@ -103,5 +117,7 @@ do_game :: proc() {
                     break loop
             }
         }
+
+        opengl_context_present(&game.gl_ctx)
     }
 }

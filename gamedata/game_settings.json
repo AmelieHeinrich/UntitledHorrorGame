@@ -5,12 +5,12 @@
 	},
 	"version": {
 		"minor": 1,
-		"revision": 0,
-		"major": 0
+		"major": 0,
+		"revision": 0
 	},
 	"window": {
 		"type": "windowed",
-		"height": 720,
-		"width": 1280
+		"width": 1280,
+		"height": 720
 	}
 }

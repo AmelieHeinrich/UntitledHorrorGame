@@ -31,6 +31,8 @@ config_file_load :: proc(file: ^Config_File, path: string) -> bool {
         return false
     }
 
+    log.debugf("Loaded config file at path %s", path)
+
     file.data = json_data
     file.path = path
     return true
