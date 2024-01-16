@@ -5,3 +5,5 @@ build
 # Development environment/Unrelated game files
 
 gamedata/log.txt
+.vscode
+ols.json

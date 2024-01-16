@@ -10,6 +10,7 @@ import "core:fmt"
 import "core:log"
 import "core:os"
 import "core:encoding/json"
+import "core:mem"
 
 import SDL "vendor:sdl2"
 
@@ -36,7 +37,7 @@ Config_Data :: struct {
     }
 };
 
-main :: proc() {
+do_game :: proc() {
     window_state: Window_State;
     config_file: Config_File;
     config_data: Config_Data;
@@ -78,11 +79,20 @@ main :: proc() {
 
     window_state.window = SDL.CreateWindow("Duvet", SDL.WINDOWPOS_UNDEFINED, SDL.WINDOWPOS_UNDEFINED, window_state.width, window_state.height, {.OPENGL})
     defer SDL.DestroyWindow(window_state.window)
+
     log.infof("Hello from Duvet! Current game version: %d.%d.%d",
                 i32(config_data.version.major),
                 i32(config_data.version.revision),
                 i32(config_data.version.minor))
     log.infof("Created window of title Duvet and of size (%d, %d)", window_state.width, window_state.height)
+
+    // TODO(ahi): Init event
+    // TODO(ahi): Init input
+    // TODO(ahi): Init audio
+    // TODO(ahi): Init graphics
+    // TODO(ahi): Init GUI widgets
+    // TODO(ahi): Init editor
+    // TODO(ahi): Init game
 
     // Main loop
     loop: for {
