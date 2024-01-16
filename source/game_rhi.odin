@@ -175,6 +175,6 @@ context_draw :: proc(start: i32, count: i32) {
     gl.DrawArrays(gl.TRIANGLES, start, count)
 }
 
-context_draw_indexed :: proc(start: i32, count: i32) {
+context_draw_indexed :: proc(count: i32) {
     gl.DrawElements(gl.TRIANGLES, count, gl.UNSIGNED_INT, nil)
 }

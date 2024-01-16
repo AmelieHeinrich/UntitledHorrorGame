@@ -119,9 +119,15 @@ do_game :: proc() {
 
     // TEST TRIANGLE
     vertices := [?]f32 {
-        -0.5, -0.5, 0.0, 1.0, 0.0, 0.0,
+         0.5,  0.5, 0.0, 1.0, 0.0, 0.0,
          0.5, -0.5, 0.0, 0.0, 1.0, 0.0,
-         0.0,  0.5, 0.0, 0.0, 0.0, 1.0,
+        -0.5, -0.5, 0.0, 0.0, 0.0, 1.0,
+        -0.5,  0.5, 0.0, 1.0, 0.0, 1.0,
+    }
+
+    indices := [?]u32 {
+        0, 1, 3,
+        1, 2, 3,
     }
 
     shaders := shader_create_standard("gamedata/shaders/triangle_vtx.glsl", "gamedata/shaders/triangle_frg.glsl")
@@ -135,6 +141,11 @@ do_game :: proc() {
     defer buffer_free(&vbuffer)
     buffer_bind(&vbuffer)
     buffer_upload(&vbuffer, size_of(vertices), &vertices[0], 0)
+
+    ibuffer := buffer_create(size_of(indices), GpuBuffer_Type.INDEX)
+    defer buffer_free(&ibuffer)
+    buffer_bind(&ibuffer)
+    buffer_upload(&ibuffer, size_of(indices), &indices[0], 0)
 
     input_layout_push_element(0, 3, size_of(f32) * 6, 0, Input_Layout_Element.FLOAT);
     input_layout_push_element(1, 3, size_of(f32) * 6, size_of(f32) * 3, Input_Layout_Element.FLOAT);
@@ -155,7 +166,8 @@ do_game :: proc() {
         shader_bind(&shaders)
         input_layout_bind(&layout)
         buffer_bind(&vbuffer)
-        context_draw(0, 3)
+        buffer_bind(&ibuffer)
+        context_draw_indexed(6)
 
         opengl_context_present(&game.gl_ctx)
     }
