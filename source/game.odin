@@ -4,7 +4,7 @@
 // $Create Time: 15/01/2024 13:05
 //=============================================================================//
 
-package duvet
+package game
 
 import "core:fmt"
 import "core:log"

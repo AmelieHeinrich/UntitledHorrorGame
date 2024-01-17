@@ -4,7 +4,7 @@
 // $Create Time: 16/01/2024 15:44
 //=============================================================================//
 
-package duvet
+package game
 
 import "core:log"
 import gl "vendor:OpenGL"
