@@ -1,6 +1,6 @@
-//========= Copyright © 2023, Sillies Industries, All rights reserved. ============//
+//========= Copyright © 2024, Sillies Industries, All rights reserved. ============//
 // $Author: Amélie Heinrich
-// $Project: Silly
+// $Project: UntitledHorrorGame
 // $Create Time: 16/01/2024 15:44
 //=============================================================================//
 
