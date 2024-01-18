@@ -8,6 +8,7 @@ package game
 
 import "core:log"
 import "core:math"
+import "core:bytes"
 import gl "vendor:OpenGL"
 
 Shader_Module :: struct {
@@ -32,6 +33,35 @@ Input_Layout_Element :: enum {
 
 Input_Layout :: struct {
     id: u32
+}
+
+Texture_Format :: enum {
+    RGBA8,
+    RGBA16F,
+    RGBA32F,
+    D32S8F
+}
+
+Gpu_Texture :: struct {
+    id: u32,
+    width: i32,
+    height: i32,
+    format: Texture_Format
+    // TODO: Layout (color attachment? depth attachment? shader resource?)
+}
+
+texture_format_to_gl :: proc(format: Texture_Format) -> u32 {
+    switch format {
+        case .RGBA8:
+            return gl.RGBA8
+        case .RGBA16F:
+            return gl.RGBA16F
+        case .RGBA32F:
+            return gl.RGBA32F
+        case .D32S8F:
+            return gl.DEPTH32F_STENCIL8
+    }
+    return gl.INVALID_ENUM
 }
 
 input_element_to_gl :: proc(element: Input_Layout_Element) -> u32 {
@@ -185,6 +215,44 @@ input_layout_unbind :: proc() {
 input_layout_push_element :: proc(index: u32, attribute_size: i32, stride: i32, offset: uintptr, attribute_type: Input_Layout_Element) {
     gl.EnableVertexAttribArray(index)
     gl.VertexAttribPointer(index, attribute_size, input_element_to_gl(attribute_type), gl.FALSE, stride, offset)
+}
+
+texture_init :: proc(width: i32, height: i32, format: Texture_Format) -> Gpu_Texture {
+    texture: Gpu_Texture
+    texture.width = width
+    texture.height = height
+    texture.format = format
+    gl.GenTextures(1, &texture.id)
+    return texture;
+}
+
+texture_bind_shader_resource :: proc(texture: ^Gpu_Texture, slot: u32) {
+    gl.ActiveTexture(gl.TEXTURE0 + slot)
+    gl.BindTexture(gl.TEXTURE_2D, texture.id)
+}
+
+texture_unbind_shader_resource :: proc(slot: u32) {
+    gl.ActiveTexture(gl.TEXTURE0 + slot)
+    gl.BindTexture(gl.TEXTURE_2D, 0)
+}
+
+texture_upload_shader_resource :: proc(texture: ^Gpu_Texture, image: ^Engine_Texture_Data) {
+    texture.width = i32(image.handle.width)
+    texture.height = i32(image.handle.height)
+
+    texture_bytes := bytes.buffer_to_bytes(&image.handle.pixels);
+
+    gl.BindTexture(gl.TEXTURE_2D, texture.id)
+    gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+    gl.TexStorage2D(gl.TEXTURE_2D, 1, texture_format_to_gl(texture.format), texture.width, texture.height)
+	gl.TexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, texture.width, texture.height, gl.RGBA, gl.UNSIGNED_BYTE, &texture_bytes[0])
+}
+
+texture_destroy :: proc(texture: ^Gpu_Texture) {
+    gl.DeleteTextures(1, &texture.id);
 }
 
 context_clear :: proc() {

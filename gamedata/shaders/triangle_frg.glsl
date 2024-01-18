@@ -6,11 +6,13 @@
 
 #version 450 core
 
-in vec3 fragment_color;
+in vec2 fragment_uvs;
 
 out vec4 pixel_color;
 
+uniform sampler2D diffuseTexture;
+
 void main()
 {
-    pixel_color = vec4(fragment_color, 1.0);
+    pixel_color = texture(diffuseTexture, fragment_uvs);
 }

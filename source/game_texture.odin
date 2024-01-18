@@ -7,6 +7,7 @@
 package game
 
 import "core:image"
+import "core:image/png"
 import "core:log"
 
 Engine_Texture_Data :: struct {

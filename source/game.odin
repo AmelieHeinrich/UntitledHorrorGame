@@ -53,7 +53,8 @@ do_game :: proc() {
     if os.exists("gamedata/log.txt") {
         os.remove("gamedata/log.txt")
     }
-    handle, err := os.open("gamedata/log.txt", os.O_CREATE | os.O_RDWR, os.S_IRUSR | os.S_IRGRP | os.S_IROTH)
+    // TODO: check values of os.S_IRUSR | os.S_IRGRP | os.S_IROTH so I can pipe it in for linux :3
+    handle, err := os.open("gamedata/log.txt", os.O_CREATE | os.O_RDWR)
     if err != 0 {
         fmt.eprintln("[ERROR] Failed to create log file!")
         return
@@ -123,10 +124,10 @@ do_game :: proc() {
 
     // TEST TRIANGLE
     vertices := [?]f32 {
-         0.5,  0.5, 0.0, 1.0, 0.0, 0.0,
-         0.5, -0.5, 0.0, 0.0, 1.0, 0.0,
-        -0.5, -0.5, 0.0, 0.0, 0.0, 1.0,
-        -0.5,  0.5, 0.0, 1.0, 0.0, 1.0,
+         0.5,  0.5, 0.0, 1.0, 0.0,
+         0.5, -0.5, 0.0, 1.0, 1.0,
+        -0.5, -0.5, 0.0, 0.0, 1.0,
+        -0.5,  0.5, 0.0, 0.0, 0.0,
     }
 
     indices := [?]u32 {
@@ -151,8 +152,16 @@ do_game :: proc() {
     buffer_bind(&ibuffer)
     buffer_upload(&ibuffer, size_of(indices), &indices[0], 0)
 
-    input_layout_push_element(0, 3, size_of(f32) * 6, 0, Input_Layout_Element.FLOAT);
-    input_layout_push_element(1, 3, size_of(f32) * 6, size_of(f32) * 3, Input_Layout_Element.FLOAT);
+    input_layout_push_element(0, 3, size_of(f32) * 5, 0, Input_Layout_Element.FLOAT);
+    input_layout_push_element(1, 2, size_of(f32) * 5, size_of(f32) * 3, Input_Layout_Element.FLOAT);
+
+    default_texture := engine_texture_load_simple("gamedata/assets/textures/test_texture.png")
+    defer engine_texture_free(&default_texture);
+
+    shader_texture := texture_init(0, 0, Texture_Format.RGBA8);
+    defer texture_destroy(&shader_texture);
+
+    texture_upload_shader_resource(&shader_texture, &default_texture);
 
     // Main loop
     loop: for {
@@ -167,10 +176,13 @@ do_game :: proc() {
         context_clear()
         context_clear_color(0.3, 0.5, 0.8, 1.0)
         context_viewport(game.window.width, game.window.height)
+
         shader_bind(&shaders)
         input_layout_bind(&layout)
         buffer_bind(&vbuffer)
         buffer_bind(&ibuffer)
+        texture_bind_shader_resource(&shader_texture, 0);
+
         context_draw_indexed(6)
 
         opengl_context_present(&game.gl_ctx)
