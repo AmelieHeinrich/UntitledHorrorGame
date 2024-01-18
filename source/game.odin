@@ -48,8 +48,12 @@ Game_State :: struct {
 
 do_game :: proc() {
     game: Game_State;
+
     // Init logger
-    handle, err := os.open("gamedata/log.txt", os.O_CREATE | os.O_TRUNC)
+    if os.exists("gamedata/log.txt") {
+        os.remove("gamedata/log.txt")
+    }
+    handle, err := os.open("gamedata/log.txt", os.O_CREATE | os.O_RDWR, os.S_IRUSR | os.S_IRGRP | os.S_IROTH)
     if err != 0 {
         fmt.eprintln("[ERROR] Failed to create log file!")
         return

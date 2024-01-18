@@ -1,16 +1,16 @@
 {
-	"window": {
-		"type": "windowed",
-		"width": 1280,
-		"height": 720
-	},
 	"version": {
-		"revision": 0,
 		"minor": 1,
-		"major": 0
+		"major": 0,
+		"revision": 0
+	},
+	"window": {
+		"height": 720,
+		"type": "windowed",
+		"width": 1280
 	},
 	"renderer": {
-		"vsync": false,
-		"api": "opengl"
+		"api": "opengl",
+		"vsync": false
 	}
 }
