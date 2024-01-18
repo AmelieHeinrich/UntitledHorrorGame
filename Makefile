@@ -5,9 +5,9 @@
 ##=============================================================================//
 
 ifeq ($(OS),Windows_NT)
-	NAME = Duvet.exe
+	NAME = Game.exe
 else
-	NAME = Duvet
+	NAME = Game
 endif
 
 SRC = source

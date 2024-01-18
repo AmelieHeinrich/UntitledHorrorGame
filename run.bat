@@ -1,2 +1,2 @@
 @echo off
-call build\Duvet.exe
+call build\Game.exe
