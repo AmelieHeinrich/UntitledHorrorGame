@@ -14,7 +14,7 @@ import "vendor:sdl2"
 CAMERA_DEFAULT_YAW :: -90
 CAMERA_DEFAULT_PITCH :: 0
 CAMERA_DEFAULT_SPEED :: 1
-CAMERA_DEFAULT_SENSITIVITY :: 2
+CAMERA_DEFAULT_SENSITIVITY :: 0.1
 CAMERA_DEFAULT_FRICTION :: 10
 CAMERA_DEFAULT_ACCELERATION :: 20
 CAMERA_DEFAULT_MAX_VELOCITY :: 15
@@ -58,7 +58,7 @@ free_cam_init :: proc() -> Free_Camera {
     cam.up[1] = -1.0
     cam.front[2] = -1.0
     cam.world_up[1] = 1.0
-    cam.position[2] = 1.0
+    cam.position[2] = 2.0
     cam.yaw = CAMERA_DEFAULT_YAW
     cam.pitch = CAMERA_DEFAULT_PITCH
     cam.friction = CAMERA_DEFAULT_FRICTION

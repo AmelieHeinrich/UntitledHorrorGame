@@ -12,8 +12,118 @@ import "core:os"
 import "core:encoding/json"
 import "core:mem"
 import "core:time"
+import "core:math"
+import "core:math/linalg"
 
 import SDL "vendor:sdl2"
+
+CUBE_VERTICES :: [?]f32 {
+    -1, 1, -1,   0, 1,
+     1, 1, -1,   1, 1,
+    -1, 1,  1,   0, 0,
+     1, 1,  1,   1, 0,
+    -1, -1, -1,  1, 0,
+     1, -1, -1,  0, 0,
+    -1, -1,  1,  1, 1,
+     1, -1,  1,  0, 1,
+     1,  1,  1,  0, 1,
+     1,  1, -1,  1, 1,
+     1, -1,  1,  0, 0,
+     1, -1, -1,  1, 0,
+    -1,  1,  1,  1, 0,
+    -1,  1, -1,  0, 0,
+    -1, -1,  1,  1, 1,
+    -1, -1, -1,  0, 1,
+    -1,  1,  1,  0, 1,
+     1,  1,  1,  1, 1,
+    -1, -1,  1,  0, 0,
+     1, -1,  1,  1, 0,
+    -1,  1, -1,  1, 0,
+     1,  1, -1,  0, 0,
+    -1, -1, -1,  1, 1,
+     1, -1, -1,  0, 1,
+    -1, 1, -1,   0, 1,
+     1, 1, -1,   1, 1,
+    -1, 1,  1,   0, 0,
+     1, 1,  1,   1, 0,
+    -1, -1, -1,  1, 0,
+     1, -1, -1,  0, 0,
+    -1, -1,  1,  1, 1,
+     1, -1,  1,  0, 1,
+     1,  1,  1,  0, 1,
+     1,  1, -1,  1, 1,
+     1, -1,  1,  0, 0,
+     1, -1, -1,  1, 0,
+    -1,  1,  1,  1, 0,
+    -1,  1, -1,  0, 0,
+    -1, -1,  1,  1, 1,
+    -1, -1, -1,  0, 1,
+    -1,  1,  1,  0, 1,
+     1,  1,  1,  1, 1,
+    -1, -1,  1,  0, 0,
+     1, -1,  1,  1, 0,
+    -1,  1, -1,  1, 0,
+     1,  1, -1,  0, 0,
+    -1, -1, -1,  1, 1,
+     1, -1, -1,  0, 1,
+    -1, 1, -1,   0, 1,
+     1, 1, -1,   1, 1,
+    -1, 1,  1,   0, 0,
+     1, 1,  1,   1, 0,
+    -1, -1, -1,  1, 0,
+     1, -1, -1,  0, 0,
+    -1, -1,  1,  1, 1,
+     1, -1,  1,  0, 1,
+     1,  1,  1,  0, 1,
+     1,  1, -1,  1, 1,
+     1, -1,  1,  0, 0,
+     1, -1, -1,  1, 0,
+    -1,  1,  1,  1, 0,
+    -1,  1, -1,  0, 0,
+    -1, -1,  1,  1, 1,
+    -1, -1, -1,  0, 1,
+    -1,  1,  1,  0, 1,
+     1,  1,  1,  1, 1,
+    -1, -1,  1,  0, 0,
+     1, -1,  1,  1, 0,
+    -1,  1, -1,  1, 0,
+     1,  1, -1,  0, 0,
+    -1, -1, -1,  1, 1,
+     1, -1, -1,  0, 1,
+    -1, 1, -1,   0, 1,
+     1, 1, -1,   1, 1,
+    -1, 1,  1,   0, 0,
+     1, 1,  1,   1, 0,
+    -1, -1, -1,  1, 0,
+     1, -1, -1,  0, 0,
+    -1, -1,  1,  1, 1,
+     1, -1,  1,  0, 1,
+     1,  1,  1,  0, 1,
+     1,  1, -1,  1, 1,
+     1, -1,  1,  0, 0,
+     1, -1, -1,  1, 0,
+    -1,  1,  1,  1, 0,
+    -1,  1, -1,  0, 0,
+    -1, -1,  1,  1, 1,
+    -1, -1, -1,  0, 1,
+    -1,  1,  1,  0, 1,
+     1,  1,  1,  1, 1,
+    -1, -1,  1,  0, 0,
+     1, -1,  1,  1, 0,
+    -1,  1, -1,  1, 0,
+     1,  1, -1,  0, 0,
+    -1, -1, -1,  1, 1,
+     1, -1, -1,  0, 1,
+}
+
+CUBE_INDICES :: [?]u32 {
+    8, 9, 10, 9, 11, 10,
+    14, 13, 12, 14, 15, 13,
+    1, 2, 0, 3, 2, 1,
+    4, 6, 5, 5, 6, 7,
+    17, 18, 16, 19, 18, 17,
+    20, 22, 21, 21, 22, 23,
+}
 
 Window_State :: struct {
     width: i32,
@@ -46,7 +156,8 @@ Game_State :: struct {
     gl_ctx: OpenGL_Context,
     events: Event_System,
 
-    last_frame: time.Time
+    last_frame: time.Time,
+    test: f32
 };
 
 game: Game_State;
@@ -127,14 +238,6 @@ do_game :: proc() {
                 i32(game.config.version.revision),
                 i32(game.config.version.minor))
 
-    // TEST TRIANGLE
-    vertices := [?]f32 {
-         0.5,  0.5, 0.0, 1.0, 0.0,
-         0.5, -0.5, 0.0, 1.0, 1.0,
-        -0.5, -0.5, 0.0, 0.0, 1.0,
-        -0.5,  0.5, 0.0, 0.0, 0.0,
-    }
-
     indices := [?]u32 {
         0, 1, 3,
         1, 2, 3,
@@ -147,15 +250,18 @@ do_game :: proc() {
     defer input_layout_destroy(&layout)
     input_layout_bind(&layout)
 
-    vbuffer := buffer_create(size_of(vertices), GpuBuffer_Type.VERTEX)
+    cube_vertices := CUBE_VERTICES
+    cube_indices := CUBE_INDICES
+
+    vbuffer := buffer_create(size_of(cube_vertices), GpuBuffer_Type.VERTEX)
     defer buffer_free(&vbuffer)
     buffer_bind(&vbuffer)
-    buffer_upload(&vbuffer, size_of(vertices), &vertices[0], 0)
+    buffer_upload(&vbuffer, size_of(cube_vertices), &cube_vertices[0], 0)
 
-    ibuffer := buffer_create(size_of(indices), GpuBuffer_Type.INDEX)
+    ibuffer := buffer_create(size_of(cube_indices), GpuBuffer_Type.INDEX)
     defer buffer_free(&ibuffer)
     buffer_bind(&ibuffer)
-    buffer_upload(&ibuffer, size_of(indices), &indices[0], 0)
+    buffer_upload(&ibuffer, size_of(cube_indices), &cube_indices[0], 0)
 
     input_layout_push_element(0, 3, size_of(f32) * 5, 0, Input_Layout_Element.FLOAT);
     input_layout_push_element(1, 2, size_of(f32) * 5, size_of(f32) * 3, Input_Layout_Element.FLOAT);
@@ -215,18 +321,22 @@ do_game :: proc() {
         free_cam_input(&cam, dt)
         free_cam_update(&cam, dt)
 
-        // Debug rectangle render
+        // Debug cube render
+        model_matrix := linalg.matrix4_rotate_f32(math.to_radians(game.test), { 1.0, 1.0, 1.0 });
+        game.test += 0.5;
+
         context_clear()
         context_clear_color(0.0, 0.0, 0.0, 1.0)
         context_viewport(game.window.width, game.window.height)
         shader_bind(&shaders)
+        shader_uniform_mat4(&shaders, "model", &model_matrix[0][0])
         shader_uniform_mat4(&shaders, "view", &cam.view[0][0])
         shader_uniform_mat4(&shaders, "proj", &cam.projection[0][0])
         input_layout_bind(&layout)
         buffer_bind(&vbuffer)
         buffer_bind(&ibuffer)
         texture_bind_shader_resource(&shader_texture, 0);
-        context_draw_indexed(6)
+        context_draw_indexed(36)
         opengl_context_present(&game.gl_ctx)
     }
 }
