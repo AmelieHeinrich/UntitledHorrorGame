@@ -35,6 +35,9 @@ opengl_context_init :: proc(ctx: ^OpenGL_Context, win: ^SDL.Window, vsync: bool)
     SDL.GL_SetSwapInterval(i32(vsync))
 
     log.debugf("Created OpenGL context of version %d.%d", OPENGL_MAJOR_VERSION, OPENGL_MINOR_VERSION)
+
+    gl.Enable(gl.DEPTH_TEST)
+    gl.DepthFunc(gl.LESS)
 }
 
 opengl_context_present :: proc(ctx: ^OpenGL_Context) {

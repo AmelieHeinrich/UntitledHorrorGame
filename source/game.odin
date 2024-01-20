@@ -11,6 +11,7 @@ import "core:log"
 import "core:os"
 import "core:encoding/json"
 import "core:mem"
+import "core:time"
 
 import SDL "vendor:sdl2"
 
@@ -44,11 +45,13 @@ Game_State :: struct {
     window: Window_State,
     gl_ctx: OpenGL_Context,
     events: Event_System,
+
+    last_frame: time.Time
 };
 
-do_game :: proc() {
-    game: Game_State;
+game: Game_State;
 
+do_game :: proc() {
     // Init logger
     if os.exists("gamedata/log.txt") {
         os.remove("gamedata/log.txt")
@@ -88,7 +91,7 @@ do_game :: proc() {
     SDL.Init({.VIDEO})
     defer SDL.Quit()
 
-    game.window.window = SDL.CreateWindow("Untitled Horror Game", SDL.WINDOWPOS_UNDEFINED, SDL.WINDOWPOS_UNDEFINED, game.window.width, game.window.height, {.OPENGL})
+    game.window.window = SDL.CreateWindow("Untitled Horror Game", SDL.WINDOWPOS_UNDEFINED, SDL.WINDOWPOS_UNDEFINED, game.window.width, game.window.height, {.OPENGL, .RESIZABLE})
     defer SDL.DestroyWindow(game.window.window)
 
     log.debugf("Created window Untitled Horror Game with dimensiosn (%d %d)", game.window.width, game.window.height)
@@ -165,9 +168,14 @@ do_game :: proc() {
 
     texture_upload_shader_resource(&shader_texture, &default_texture);
 
+    cam := free_cam_init()
+
     // Main loop
     loop: for {
         mouse_wheel_event := false
+        t := time.now()
+        dt: f32 = f32(t._nsec - game.last_frame._nsec) / 10000000.0
+        game.last_frame = t
 
         event: SDL.Event
         for SDL.PollEvent(&event) {
@@ -194,25 +202,31 @@ do_game :: proc() {
                     input_system_handle_wheel(event.wheel.x, event.wheel.y)
                     mouse_wheel_event = true
                     break
+                case .WINDOWEVENT:
+                    SDL.GetWindowSize(game.window.window, &game.window.width, &game.window.height)
+                    break
             }
         }
         if !mouse_wheel_event {
             input_system_handle_wheel(0, 0)
         }
 
+        // Update camera
+        free_cam_input(&cam, dt)
+        free_cam_update(&cam, dt)
+
         // Debug rectangle render
         context_clear()
-        context_clear_color(0.3, 0.5, 0.8, 1.0)
+        context_clear_color(0.0, 0.0, 0.0, 1.0)
         context_viewport(game.window.width, game.window.height)
-
         shader_bind(&shaders)
+        shader_uniform_mat4(&shaders, "view", &cam.view[0][0])
+        shader_uniform_mat4(&shaders, "proj", &cam.projection[0][0])
         input_layout_bind(&layout)
         buffer_bind(&vbuffer)
         buffer_bind(&ibuffer)
         texture_bind_shader_resource(&shader_texture, 0);
-
         context_draw_indexed(6)
-
         opengl_context_present(&game.gl_ctx)
     }
 }
