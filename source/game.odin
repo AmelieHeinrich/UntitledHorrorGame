@@ -185,9 +185,16 @@ do_game :: proc() {
     defer log.destroy_multi_logger(&multi_logger)
 
     context.logger = multi_logger
+    
+    // Init VFS
+    virtual_file_system_init()
+    defer virtual_file_system_free()
+
+    virtual_file_system_mount("gamedata/")
+    virtual_file_system_mount("gamedata/assets/")
 
     // Init config file
-    if !config_file_load(&game.config_file, "gamedata/game_settings.json") {
+    if !config_file_load(&game.config_file, vfs("game_settings.json")) {
         log.error("Failed to load json settings file!")
         return
     }
@@ -243,7 +250,7 @@ do_game :: proc() {
         1, 2, 3,
     }
 
-    shaders := shader_create_standard("gamedata/shaders/triangle_vtx.glsl", "gamedata/shaders/triangle_frg.glsl")
+    shaders := shader_create_standard(vfs("shaders/triangle_vtx.glsl"), vfs("shaders/triangle_frg.glsl"))
     defer shader_destroy(&shaders)
 
     layout := input_layout_init()
@@ -266,7 +273,7 @@ do_game :: proc() {
     input_layout_push_element(0, 3, size_of(f32) * 5, 0, Input_Layout_Element.FLOAT);
     input_layout_push_element(1, 2, size_of(f32) * 5, size_of(f32) * 3, Input_Layout_Element.FLOAT);
 
-    default_texture := engine_texture_load_simple("gamedata/assets/textures/test_texture.png")
+    default_texture := engine_texture_load_simple(vfs("textures/test_texture.png"))
     defer engine_texture_free(&default_texture);
 
     shader_texture := texture_init(0, 0, Texture_Format.RGBA8);
