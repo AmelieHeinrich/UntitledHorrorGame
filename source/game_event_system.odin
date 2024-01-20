@@ -10,11 +10,7 @@ Event_Type :: enum {
     RESIZE,
     GAMEPAD_CONNECT,
     GAMEPAD_DISCONNECT,
-    KEY_PRESSED,
-    KEY_RELEASED,
-    MOUSE_BUTTON_PRESSED,
-    MOUSE_BUTTON_RELEASED,
-    MOUSE_SCROLL,
+    // TODO: More events?
 }
 
 Event_Data :: struct #raw_union {

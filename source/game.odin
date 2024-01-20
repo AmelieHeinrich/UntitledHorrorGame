@@ -102,6 +102,8 @@ do_game :: proc() {
     defer event_system_free(&game.events)
 
     // TODO(ahi): Init input
+    input_system_init()
+    defer input_system_free()
 
     // TODO(ahi): Init asset system
 
@@ -165,14 +167,40 @@ do_game :: proc() {
 
     // Main loop
     loop: for {
+        mouse_wheel_event := false
+
         event: SDL.Event
         for SDL.PollEvent(&event) {
             #partial switch event.type {
                 case .QUIT:
                     break loop
+                case .MOUSEMOTION:
+                    input_system_handle_mouse_delta(event.motion.xrel, event.motion.yrel)
+                    input_system_handle_mouse_position(event.motion.x, event.motion.y)
+                    break
+                case .KEYDOWN:
+                    input_system_handle_key(&event.key)
+                    break
+                case .KEYUP:
+                    input_system_handle_key(&event.key)
+                    break
+                case .MOUSEBUTTONDOWN:
+                    input_system_handle_button(&event.button)
+                    break
+                case .MOUSEBUTTONUP:
+                    input_system_handle_button(&event.button)
+                    break
+                case .MOUSEWHEEL:
+                    input_system_handle_wheel(event.wheel.x, event.wheel.y)
+                    mouse_wheel_event = true
+                    break
             }
         }
+        if !mouse_wheel_event {
+            input_system_handle_wheel(0, 0)
+        }
 
+        // Debug rectangle render
         context_clear()
         context_clear_color(0.3, 0.5, 0.8, 1.0)
         context_viewport(game.window.width, game.window.height)
