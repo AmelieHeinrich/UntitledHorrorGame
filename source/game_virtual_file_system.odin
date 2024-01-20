@@ -39,6 +39,8 @@ vfs :: proc(path: string) -> string {
         if (os.exists(strings.to_string(b))) {
             result = strings.to_string(b)
             break
+        } else {
+            result = path
         }
     }
     strings.builder_destroy(&b)

@@ -194,11 +194,11 @@ do_game :: proc() {
     virtual_file_system_mount("gamedata/assets/")
 
     // Init config file
-    if !config_file_load(&game.config_file, vfs("game_settings.json")) {
+    if !config_file_load(&game.config_file, "gamedata/game_settings.json") {
         log.error("Failed to load json settings file!")
         return
     }
-    defer config_file_destroy(&game.config_file)
+    defer config_file_destroy(&game.config_file, "gamedata/game_settings.json")
 
     // Create window
     json.unmarshal(game.config_file.file_contents, &game.config)

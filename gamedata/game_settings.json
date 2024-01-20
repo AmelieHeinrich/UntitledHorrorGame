@@ -4,13 +4,13 @@
 		"width": 1280,
 		"type": "windowed"
 	},
-	"version": {
-		"revision": 0,
-		"major": 0,
-		"minor": 1
-	},
 	"renderer": {
-		"api": "opengl",
-		"vsync": true
+		"vsync": true,
+		"api": "opengl"
+	},
+	"version": {
+		"minor": 1,
+		"revision": 0,
+		"major": 0
 	}
 }

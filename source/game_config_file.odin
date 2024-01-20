@@ -12,8 +12,7 @@ import "core:encoding/json"
 
 Config_File :: struct {
     data: json.Value,
-    file_contents: []u8,
-    path: string,
+    file_contents: []u8
 }
 
 config_file_load :: proc(file: ^Config_File, path: string) -> bool {
@@ -30,15 +29,13 @@ config_file_load :: proc(file: ^Config_File, path: string) -> bool {
         log.error(err)
         return false
     }
-
-    log.debugf("Loaded config file at path %s", path)
+    log.debugf("Loaded config file at %s", path)
 
     file.data = json_data
-    file.path = path
     return true
 }
 
-config_file_destroy :: proc(file: ^Config_File) {
+config_file_destroy :: proc(file: ^Config_File, path: string) {
     opt: json.Marshal_Options
     opt.pretty = true
 
@@ -50,9 +47,9 @@ config_file_destroy :: proc(file: ^Config_File) {
     }
     defer delete(data)
 
-    ok := os.write_entire_file(file.path, data)
+    ok := os.write_entire_file(path, data)
     if !ok {
-        log.errorf("Failed to write json string to file %s", file.path)
+        log.errorf("Failed to write json string to file %s", path)
     }
     json.destroy_value(file.data)
     delete(file.file_contents)
