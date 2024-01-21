@@ -11,6 +11,8 @@ import "core:math/linalg"
 
 import "vendor:sdl2"
 
+import "base"
+
 CAMERA_DEFAULT_YAW :: -90
 CAMERA_DEFAULT_PITCH :: 0
 CAMERA_DEFAULT_SPEED :: 1
@@ -83,7 +85,7 @@ free_cam_update :: proc(cam: ^Free_Camera, dt: f32) {
     cam.width = game.window.width
     cam.height = game.window.height
 
-    mouse_pos := input_system_get_mouse_position()
+    mouse_pos := base.input_system_get_mouse_position()
 
     cam.mouse_pos[0] = mouse_pos[0]
     cam.mouse_pos[1] = mouse_pos[1]
@@ -95,16 +97,16 @@ free_cam_update :: proc(cam: ^Free_Camera, dt: f32) {
 
 free_cam_input :: proc(cam: ^Free_Camera, dt: f32) {
     speed_multiplier := cam.acceleration * dt
-    if input_system_is_key_pressed(sdl2.Keycode.Z) {
+    if base.input_system_is_key_pressed(sdl2.Keycode.Z) {
         cam.velocity += cam.front * speed_multiplier
     }
-    else if input_system_is_key_pressed(sdl2.Keycode.S) {
+    else if base.input_system_is_key_pressed(sdl2.Keycode.S) {
         cam.velocity -= cam.front * speed_multiplier
     }
-    if input_system_is_key_pressed(sdl2.Keycode.Q) {
+    if base.input_system_is_key_pressed(sdl2.Keycode.Q) {
         cam.velocity -= cam.right * speed_multiplier
     }
-    else if input_system_is_key_pressed(sdl2.Keycode.D) {
+    else if base.input_system_is_key_pressed(sdl2.Keycode.D) {
         cam.velocity += cam.right * speed_multiplier
     }
 
@@ -117,17 +119,17 @@ free_cam_input :: proc(cam: ^Free_Camera, dt: f32) {
     }
     cam.position += cam.velocity * dt
 
-    mouse := input_system_get_mouse_position()
+    mouse := base.input_system_get_mouse_position()
 
     dx := f32(mouse[0] - cam.mouse_pos[0]) * CAMERA_DEFAULT_SENSITIVITY
     dy := f32(mouse[1] - cam.mouse_pos[1]) * CAMERA_DEFAULT_SENSITIVITY
 
-    if input_system_is_button_pressed(sdl2.BUTTON_LEFT) {
-        input_system_grab_mouse()
+    if base.input_system_is_button_pressed(sdl2.BUTTON_LEFT) {
+        base.input_system_grab_mouse()
         cam.yaw += dx;
         cam.pitch -= dy;
     } else {
-        input_system_release_mouse()
+        base.input_system_release_mouse()
     }
 
     free_cam_update_vectors(cam)

@@ -4,7 +4,7 @@
 // $Create Time: 18/01/2024 10:51
 //=============================================================================//
 
-package game
+package render
 
 import "core:image"
 import "core:image/png"
