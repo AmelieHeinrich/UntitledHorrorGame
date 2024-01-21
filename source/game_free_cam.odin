@@ -94,8 +94,7 @@ free_cam_update :: proc(cam: ^Free_Camera, dt: f32) {
 }
 
 free_cam_input :: proc(cam: ^Free_Camera, dt: f32) {
-    velocity_delta := dt / 100.0
-    speed_multiplier := cam.acceleration * velocity_delta
+    speed_multiplier := cam.acceleration * dt
     if input_system_is_key_pressed(sdl2.Keycode.Z) {
         cam.velocity += cam.front * speed_multiplier
     }
@@ -109,19 +108,19 @@ free_cam_input :: proc(cam: ^Free_Camera, dt: f32) {
         cam.velocity += cam.right * speed_multiplier
     }
 
-    friction_multiplier := 1.0 / (1.0 + (cam.friction * velocity_delta))
+    friction_multiplier := 1.0 / (1.0 + (cam.friction * dt))
     cam.velocity = cam.velocity * friction_multiplier
 
     vec_length := linalg.length(cam.velocity)
     if vec_length > cam.max_velocity {
         cam.velocity = linalg.normalize(cam.velocity) * cam.max_velocity
     }
-    cam.position += cam.velocity * velocity_delta
+    cam.position += cam.velocity * dt
 
     mouse := input_system_get_mouse_position()
 
-    dx := f32((mouse[0]) - cam.mouse_pos[0]) * (CAMERA_DEFAULT_SENSITIVITY * dt)
-    dy := f32((mouse[1]) - cam.mouse_pos[1]) * (CAMERA_DEFAULT_SENSITIVITY * dt)
+    dx := f32(mouse[0] - cam.mouse_pos[0]) * CAMERA_DEFAULT_SENSITIVITY
+    dy := f32(mouse[1] - cam.mouse_pos[1]) * CAMERA_DEFAULT_SENSITIVITY
 
     if input_system_is_button_pressed(sdl2.BUTTON_LEFT) {
         input_system_grab_mouse()

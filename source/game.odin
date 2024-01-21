@@ -185,13 +185,6 @@ do_game :: proc() {
     defer log.destroy_multi_logger(&multi_logger)
 
     context.logger = multi_logger
-    
-    // Init VFS
-    virtual_file_system_init()
-    defer virtual_file_system_free()
-
-    virtual_file_system_mount("gamedata/")
-    virtual_file_system_mount("gamedata/assets/")
 
     // Init config file
     if !config_file_load(&game.config_file, "gamedata/game_settings.json") {
@@ -212,7 +205,7 @@ do_game :: proc() {
     game.window.window = SDL.CreateWindow("Untitled Horror Game", SDL.WINDOWPOS_UNDEFINED, SDL.WINDOWPOS_UNDEFINED, game.window.width, game.window.height, {.OPENGL, .RESIZABLE})
     defer SDL.DestroyWindow(game.window.window)
 
-    log.debugf("Created window Untitled Horror Game with dimensiosn (%d %d)", game.window.width, game.window.height)
+    log.debugf("Created window Untitled Horror Game with dimensions (%d, %d)", game.window.width, game.window.height)
 
     // Init OpenGL Context
     opengl_context_init(&game.gl_ctx, game.window.window, game.config.renderer.vsync)
@@ -250,7 +243,7 @@ do_game :: proc() {
         1, 2, 3,
     }
 
-    shaders := shader_create_standard(vfs("shaders/triangle_vtx.glsl"), vfs("shaders/triangle_frg.glsl"))
+    shaders := shader_create_standard("gamedata/shaders/triangle_vtx.glsl", "gamedata/shaders/triangle_frg.glsl")
     defer shader_destroy(&shaders)
 
     layout := input_layout_init()
@@ -273,7 +266,7 @@ do_game :: proc() {
     input_layout_push_element(0, 3, size_of(f32) * 5, 0, Input_Layout_Element.FLOAT);
     input_layout_push_element(1, 2, size_of(f32) * 5, size_of(f32) * 3, Input_Layout_Element.FLOAT);
 
-    default_texture := engine_texture_load_simple(vfs("textures/test_texture.png"))
+    default_texture := engine_texture_load_simple("gamedata/assets/textures/test_texture.png")
     defer engine_texture_free(&default_texture);
 
     shader_texture := texture_init(0, 0, Texture_Format.RGBA8);
@@ -283,13 +276,15 @@ do_game :: proc() {
 
     cam := free_cam_init()
 
+    game.last_frame = time.now()
+
     // Main loop
     loop: for {
-        mouse_wheel_event := false
         t := time.now()
-        dt: f32 = f32(t._nsec - game.last_frame._nsec) / 10000000.0
+        dt: f32 = f32(t._nsec - game.last_frame._nsec) / 1000000000.0
         game.last_frame = t
 
+        mouse_wheel_event := false
         event: SDL.Event
         for SDL.PollEvent(&event) {
             #partial switch event.type {
@@ -330,7 +325,7 @@ do_game :: proc() {
 
         // Debug cube render
         model_matrix := linalg.matrix4_rotate_f32(math.to_radians(game.test), { 1.0, 1.0, 1.0 });
-        game.test += 0.5;
+        game.test += 50 * dt;
 
         context_clear()
         context_clear_color(0.0, 0.0, 0.0, 1.0)
