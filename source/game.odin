@@ -23,6 +23,10 @@ import SDL "vendor:sdl2"
 import "render"
 import "base"
 
+MINOR_VERSION :: 1
+REVISION :: 0
+MAJOR_VERSION :: 0
+
 Window_State :: struct {
     width: i32,
     height: i32,
@@ -33,11 +37,6 @@ Config_Data :: struct {
     renderer: struct {
         vsync: bool,
         api: string
-    },
-    version: struct {
-        minor: f32,
-        major: f32,
-        revision: f32
     },
     window: struct {
         type: string,
@@ -132,9 +131,9 @@ do_game :: proc() {
     // TODO(ahi): Init editor
 
     log.infof("Hello from Untitled Horror Game! Current game version: %d.%d.%d",
-                i32(game.config.version.major),
-                i32(game.config.version.revision),
-                i32(game.config.version.minor))
+                MAJOR_VERSION,
+                REVISION,
+                MINOR_VERSION)
 
     game.last_frame = time.now()
 
@@ -185,4 +184,11 @@ do_game :: proc() {
 
         render.opengl_context_present(&game.gl_ctx)
     }
+
+    // Dump settings
+    root := game.config_file.data.(json.Object)
+
+    window := root["window"].(json.Object)
+    window["width"] = json.Float(f32(game.window.width))
+    window["height"] = json.Float(f32(game.window.height))
 }

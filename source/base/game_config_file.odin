@@ -35,11 +35,18 @@ config_file_load :: proc(file: ^Config_File, path: string) -> bool {
     return true
 }
 
-config_file_destroy :: proc(file: ^Config_File, path: string) {
+config_file_destroy :: proc(file: ^Config_File, path: string, data: rawptr = nil) {
     opt: json.Marshal_Options
     opt.pretty = true
+    
+    marshal_data: any = nil
+    if data != nil {
+        marshal_data = data
+    } else {
+        marshal_data = file.data
+    }
 
-    data, err := json.marshal(file.data, opt)
+    data, err := json.marshal(marshal_data, opt)
     if err != nil {
         log.errorf("Failed to convert json data back to bytes")
         log.error(err)

@@ -1,34 +1,79 @@
-//========= Copyright © 2024, Sillies Industries, All rights reserved. ============//
+//========= Copyright © 2023, Sillies Industries, All rights reserved. ============//
 // $Author: Amélie Heinrich
-// $Project: UntitledHorrorGame
-// $Create Time: 18/01/2024 10:51
+// $Project: Silly
+// $Create Time: 22/01/2024 19:24
 //=============================================================================//
 
 package render
 
-import "core:image"
-import "core:image/png"
-import "core:log"
+import "core:bytes"
+import gl "vendor:OpenGL"
 
-Engine_Texture_Data :: struct {
-    path: string,
-    handle: ^image.Image
+import "../asset"
+
+Texture_Format :: enum {
+    RGBA8,
+    RGBA16F,
+    RGBA32F,
+    D32S8F
 }
 
-// Loads texture data from a file. Need to implement an upgraded version that takes bytes so we can do multithreaded image loading/streaming
-engine_texture_load_simple :: proc(path: string) -> Engine_Texture_Data {
-    handle: Engine_Texture_Data
+Gpu_Texture :: struct {
+    id: u32,
+    width: i32,
+    height: i32,
+    format: Texture_Format
+    // TODO: Layout (color attachment? depth attachment? shader resource?)
+}
 
-    img, err := image.load_from_file(path, { .alpha_add_if_missing })
-    if err != nil {
-        log.errorf("Failed to load image %s!", path);
-        log.error(err)
+texture_format_to_gl :: proc(format: Texture_Format) -> u32 {
+    switch format {
+        case .RGBA8:
+            return gl.RGBA8
+        case .RGBA16F:
+            return gl.RGBA16F
+        case .RGBA32F:
+            return gl.RGBA32F
+        case .D32S8F:
+            return gl.DEPTH32F_STENCIL8
     }
-    handle.path = path
-    handle.handle = img
-    return handle
+    return gl.INVALID_ENUM
 }
 
-engine_texture_free :: proc(texture: ^Engine_Texture_Data) {
-    image.destroy(texture.handle)
+texture_init :: proc(width: i32, height: i32, format: Texture_Format) -> Gpu_Texture {
+    texture: Gpu_Texture
+    texture.width = width
+    texture.height = height
+    texture.format = format
+    gl.GenTextures(1, &texture.id)
+    return texture;
+}
+
+texture_bind_shader_resource :: proc(texture: ^Gpu_Texture, slot: u32) {
+    gl.ActiveTexture(gl.TEXTURE0 + slot)
+    gl.BindTexture(gl.TEXTURE_2D, texture.id)
+}
+
+texture_unbind_shader_resource :: proc(slot: u32) {
+    gl.ActiveTexture(gl.TEXTURE0 + slot)
+    gl.BindTexture(gl.TEXTURE_2D, 0)
+}
+
+texture_upload_shader_resource :: proc(texture: ^Gpu_Texture, image: ^asset.Engine_Texture_Data) {
+    texture.width = i32(image.handle.width)
+    texture.height = i32(image.handle.height)
+
+    texture_bytes := bytes.buffer_to_bytes(&image.handle.pixels);
+
+    gl.BindTexture(gl.TEXTURE_2D, texture.id)
+    gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+    gl.TexStorage2D(gl.TEXTURE_2D, 1, texture_format_to_gl(texture.format), texture.width, texture.height)
+	gl.TexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, texture.width, texture.height, gl.RGBA, gl.UNSIGNED_BYTE, &texture_bytes[0])
+}
+
+texture_destroy :: proc(texture: ^Gpu_Texture) {
+    gl.DeleteTextures(1, &texture.id);
 }
