@@ -21,7 +21,7 @@ shader_create_standard :: proc(vertex: string, fragment: string) -> Shader_Modul
     if !ok {
         log.errorf("Failed to create standard shader from path %s and %s", vertex, fragment)
         module.program = 0
-        return module;
+        return module
     }
     module.program = program
     module.uniforms = gl.get_uniforms_from_program(module.program)

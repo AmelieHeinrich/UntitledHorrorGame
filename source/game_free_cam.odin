@@ -126,8 +126,8 @@ free_cam_input :: proc(cam: ^Free_Camera, dt: f32) {
 
     if base.input_system_is_button_pressed(sdl2.BUTTON_LEFT) {
         base.input_system_grab_mouse()
-        cam.yaw += dx;
-        cam.pitch -= dy;
+        cam.yaw += dx
+        cam.pitch -= dy
     } else {
         base.input_system_release_mouse()
     }

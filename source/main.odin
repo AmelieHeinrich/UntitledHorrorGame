@@ -10,12 +10,12 @@ import "core:mem"
 import "core:log"
 
 main :: proc() {
-    tracking_allocator: mem.Tracking_Allocator;
+    tracking_allocator: mem.Tracking_Allocator
 
     // Init allocator
     mem.tracking_allocator_init(&tracking_allocator, context.allocator)
-    defer mem.tracking_allocator_destroy(&tracking_allocator);
-    context.allocator = mem.tracking_allocator(&tracking_allocator);
+    defer mem.tracking_allocator_destroy(&tracking_allocator)
+    context.allocator = mem.tracking_allocator(&tracking_allocator)
 
     // Game
     do_game()
@@ -25,6 +25,6 @@ main :: proc() {
         log.errorf("%v leaked %m\n", leak.location, leak.size)
     }
     for bad_free in tracking_allocator.bad_free_array {
-        log.errorf("%v allocation %p was freed badly\n", bad_free.location, bad_free.memory);
+        log.errorf("%v allocation %p was freed badly\n", bad_free.location, bad_free.memory)
     }
 }

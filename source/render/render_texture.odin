@@ -9,8 +9,6 @@ package render
 import "core:bytes"
 import gl "vendor:OpenGL"
 
-import "../asset"
-
 Texture_Format :: enum {
     RGBA8,
     RGBA16F,
@@ -46,7 +44,7 @@ texture_init :: proc(width: i32, height: i32, format: Texture_Format) -> Gpu_Tex
     texture.height = height
     texture.format = format
     gl.GenTextures(1, &texture.id)
-    return texture;
+    return texture
 }
 
 texture_bind_shader_resource :: proc(texture: ^Gpu_Texture, slot: u32) {
@@ -59,21 +57,21 @@ texture_unbind_shader_resource :: proc(slot: u32) {
     gl.BindTexture(gl.TEXTURE_2D, 0)
 }
 
-texture_upload_shader_resource :: proc(texture: ^Gpu_Texture, image: ^asset.Engine_Texture_Data) {
-    texture.width = i32(image.handle.width)
-    texture.height = i32(image.handle.height)
+texture_upload_shader_resource :: proc(texture: ^Gpu_Texture, width: i32, height: i32, pixels: ^bytes.Buffer) {
+    texture.width = width
+    texture.height = height
 
-    texture_bytes := bytes.buffer_to_bytes(&image.handle.pixels);
+    texture_bytes := bytes.buffer_to_bytes(pixels)
 
     gl.BindTexture(gl.TEXTURE_2D, texture.id)
-    gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
-	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+    gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT)
+	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT)
     gl.TexStorage2D(gl.TEXTURE_2D, 1, texture_format_to_gl(texture.format), texture.width, texture.height)
 	gl.TexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, texture.width, texture.height, gl.RGBA, gl.UNSIGNED_BYTE, &texture_bytes[0])
 }
 
 texture_destroy :: proc(texture: ^Gpu_Texture) {
-    gl.DeleteTextures(1, &texture.id);
+    gl.DeleteTextures(1, &texture.id)
 }

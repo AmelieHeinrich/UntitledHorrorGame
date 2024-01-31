@@ -8,6 +8,9 @@ package asset
 
 import "core:image"
 import "core:image/png"
+import "core:image/netpbm"
+import "core:image/qoi"
+import "core:image/tga"
 import "core:log"
 
 Engine_Texture_Data :: struct {
@@ -21,7 +24,7 @@ engine_texture_load_simple :: proc(path: string) -> Engine_Texture_Data {
 
     img, err := image.load_from_file(path, { .alpha_add_if_missing })
     if err != nil {
-        log.errorf("Failed to load image %s!", path);
+        log.errorf("Failed to load image %s!", path)
         log.error(err)
     }
     handle.path = path
