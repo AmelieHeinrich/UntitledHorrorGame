@@ -113,7 +113,7 @@ do_game :: proc() {
     base.event_system_init(&game.events)
     defer base.event_system_free(&game.events)
 
-    // TODO(ahi): Init input
+    // Init input system
     base.input_system_init()
     defer base.input_system_free()
 
@@ -121,7 +121,7 @@ do_game :: proc() {
 
     // TODO(ahi): Init audio
     
-    // TODO(ahi): Init graphics
+    // TODO(ahi): Init renderer
     
     // TODO(ahi): Init GUI
     

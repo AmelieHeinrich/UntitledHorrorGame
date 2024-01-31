@@ -18,7 +18,7 @@ Engine_Texture_Data :: struct {
     handle: ^image.Image
 }
 
-// Loads texture data from a file. Need to implement an upgraded version that takes bytes so we can do multithreaded image loading/streaming
+// Loads texture data from a file. Need to implement an upgraded version that takes a file handle so we can implement multithreading/streaming
 engine_texture_load_simple :: proc(path: string) -> Engine_Texture_Data {
     handle: Engine_Texture_Data
 
