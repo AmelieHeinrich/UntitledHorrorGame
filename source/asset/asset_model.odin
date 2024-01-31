@@ -77,41 +77,20 @@ process_primitive :: proc(data: ^Mesh_Data, primitive: cgltf.primitive) {
         append(&data.vertices, vertex)
     }
 
-    v3: uint = 0
-    v2: uint = 0
     for i: uint = 0; i < vertex_count; i += 1 {
         // Vertices
-        if !cgltf.accessor_read_float(pos_attribute.data, v3, &data.vertices[i].position.x, 4) {
+        if !cgltf.accessor_read_float(pos_attribute.data, i, &data.vertices[i].position[0], 4) {
             log.error("Failed to read position accessor x component!")
-        }
-        if !cgltf.accessor_read_float(pos_attribute.data, v3 + 1, &data.vertices[i].position.y, 4) {
-            log.error("Failed to read position accessor y component!")
-        }
-        if !cgltf.accessor_read_float(pos_attribute.data, v3 + 2, &data.vertices[i].position.z, 4) {
-            log.error("Failed to read position accessor z component!")
         }
 
         // Normals
-        if !cgltf.accessor_read_float(norm_attribute.data, v3, &data.vertices[i].normals.x, 4) {
+        if !cgltf.accessor_read_float(norm_attribute.data, i, &data.vertices[i].normals[0], 4) {
             log.error("Failed to read normal accessor x component!")
         }
-        if !cgltf.accessor_read_float(norm_attribute.data, v3 + 1, &data.vertices[i].normals.y, 4) {
-            log.error("Failed to read normal accessor y component!")
-        }
-        if !cgltf.accessor_read_float(norm_attribute.data, v3 + 2, &data.vertices[i].normals.z, 4) {
-            log.error("Failed to read normal accessor z component!")
-        }
-
         // UVs
-        if !cgltf.accessor_read_float(uv_attribute.data, v2, &data.vertices[i].uv.x, 4) {
+        if !cgltf.accessor_read_float(uv_attribute.data, i, &data.vertices[i].uv[0], 4) {
             log.error("Failed to read uv accessor x component!")
         }
-        if !cgltf.accessor_read_float(uv_attribute.data, v2 + 1, &data.vertices[i].uv.y, 4) {
-            log.error("Failed to read uv accessor y component!")
-        }
-
-        v3 += 3
-        v2 += 2
     }
 
     index_count := primitive.indices.count
@@ -142,8 +121,8 @@ process_node :: proc(node: ^cgltf.node, model: ^Engine_Model) {
         if node.has_rotation {
             data.rotation.x = node.rotation[0]
             data.rotation.y = node.rotation[1]
-            data.rotation.y = node.rotation[2]
-            data.rotation.z = node.rotation[3]
+            data.rotation.z = node.rotation[2]
+            data.rotation.w = node.rotation[3]
             data.transformation_matrix *= linalg.matrix4_from_quaternion_f32(data.rotation)
         }
 

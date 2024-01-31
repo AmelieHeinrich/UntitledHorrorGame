@@ -231,7 +231,6 @@ do_game :: proc() {
         render.shader_uniform_mat4(&shaders, "proj", &camera.projection[0][0])
         render.shader_uniform_mat4(&shaders, "view", &camera.view[0][0])
         render.shader_uniform_mat4(&shaders, "model", &model.meshes[0].transformation_matrix[0][0])
-        //render.context_draw(0, i32(len(model.meshes[0].vertices)))
         render.context_draw_indexed(i32(len(model.meshes[0].indices)))
 
         render.opengl_context_present(&game.gl_ctx)

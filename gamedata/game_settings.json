@@ -5,7 +5,7 @@
 		"width": 2560
 	},
 	"renderer": {
-		"vsync": true,
-		"api": "opengl"
+		"api": "opengl",
+		"vsync": true
 	}
 }
