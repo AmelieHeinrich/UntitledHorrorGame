@@ -23,6 +23,7 @@ import SDL "vendor:sdl2"
 import "render"
 import "base"
 import "asset"
+import "audio"
 
 MINOR_VERSION :: 1
 REVISION :: 0
@@ -120,6 +121,8 @@ do_game :: proc() {
     // TODO(ahi): Init asset system
 
     // TODO(ahi): Init audio
+    audio.audio_system_init()
+    defer audio.audio_system_destroy()
     
     // TODO(ahi): Init renderer
     
@@ -144,7 +147,7 @@ do_game :: proc() {
 
     // Rando ass texture
     texture := asset.engine_texture_load_simple("gamedata/assets/textures/Default_albedo.png")
-    
+
     gpu_texture := render.texture_init(i32(texture.handle.width), i32(texture.handle.height), render.Texture_Format.RGBA8)
     defer render.texture_destroy(&gpu_texture)
     render.texture_upload_shader_resource(&gpu_texture, i32(texture.handle.width), i32(texture.handle.height), &texture.handle.pixels)
@@ -219,6 +222,8 @@ do_game :: proc() {
 
         free_cam_input(&camera, dt)
         free_cam_update(&camera, dt)
+
+        audio.audio_system_set_listener_info(camera.position, camera.front)
         
         render.context_clear()
         render.context_clear_color(0.0, 0.0, 0.0, 1.0)

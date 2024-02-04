@@ -1,8 +1,8 @@
 {
 	"window": {
+		"height": 1369,
 		"type": "windowed",
-		"width": 2560,
-		"height": 1369
+		"width": 2560
 	},
 	"renderer": {
 		"api": "opengl",
