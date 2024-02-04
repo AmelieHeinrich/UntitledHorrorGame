@@ -179,6 +179,8 @@ do_game :: proc() {
 
     game.last_frame = time.now()
 
+    audio.audio_play_from_file("gamedata/assets/sfx/syncamore.wav")
+
     // Main loop
     loop: for {
         t := time.now()
