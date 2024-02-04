@@ -120,7 +120,7 @@ do_game :: proc() {
 
     // TODO(ahi): Init asset system
 
-    // TODO(ahi): Init audio
+    // Init audio system
     audio.audio_system_init()
     defer audio.audio_system_destroy()
     

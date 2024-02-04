@@ -18,11 +18,26 @@ Audio_System :: struct {
 
 audio_system: Audio_System
 
+@(private)
+data_callback :: proc(device: ^miniaudio.device, output: rawptr, input: rawptr, frame_count: u32) {
+    engine := (^miniaudio.engine)(device.pUserData)
+
+    if engine.pResourceManager != nil {
+        if (engine.pResourceManager.config.flags & u32(miniaudio.resource_manager_flags.NO_THREADING)) != 0 {
+            miniaudio.resource_manager_process_next_job(engine.pResourceManager)
+        }
+    }
+
+    miniaudio.engine_read_pcm_frames(engine, output, u64(frame_count), nil)
+}
+
 audio_system_init :: proc() {
     config := miniaudio.device_config_init(miniaudio.device_type.playback)
-    config.playback.format = miniaudio.format.s16
+    config.playback.format = miniaudio.format.f32
     config.playback.channels = 2 // TODO: Surround sound with 8 channels?
     config.sampleRate = 48000
+    config.dataCallback = miniaudio.device_data_proc(data_callback)
+    config.pUserData = &audio_system.engine
 
     err := miniaudio.device_init(nil, &config, &audio_system.device)
     if err != miniaudio.result.SUCCESS {
@@ -36,7 +51,7 @@ audio_system_init :: proc() {
 
     err = miniaudio.engine_init(&engine_config, &audio_system.engine)
     if err != miniaudio.result.SUCCESS {
-        log.error("Failed to create miniaudio device!")
+        log.error("Failed to create miniaudio engine!")
         log.error(err)
     }
 
