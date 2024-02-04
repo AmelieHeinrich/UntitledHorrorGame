@@ -179,7 +179,10 @@ do_game :: proc() {
 
     game.last_frame = time.now()
 
-    audio.audio_play_from_file("gamedata/assets/sfx/syncamore.wav")
+    file: audio.Music_File
+    audio.music_file_load(&file, "gamedata/assets/sfx/syncamore.wav")
+    defer audio.music_file_free(&file)
+    audio.music_file_play(&file)
 
     // Main loop
     loop: for {

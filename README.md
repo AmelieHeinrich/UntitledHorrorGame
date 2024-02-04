@@ -4,19 +4,18 @@ This is an attempt at creating a 3D psychological horror game from scratch using
 
 ## ROADMAP
 
-- Audio
 - Asset packaging
 - World system
+- Debug UI (ImGui?)
 - Map editor
 - Advanced rendering:
     - Anti-aliasing
     - Color correction
+    - Occlusion culling
+    - Frustum culling
+    - Game UI
     - Animation
     - Physically based lighting
     - Decals
 - Physics
 - Make the actual game
-
-## BUGS
-
-- Audio system source manager doesn't work, crashes on device data callback
