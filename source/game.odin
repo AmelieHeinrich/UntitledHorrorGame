@@ -125,7 +125,9 @@ do_game :: proc() {
     defer audio.audio_system_destroy()
     
     // TODO(ahi): Init renderer
-    
+    scene_renderer := scene_renderer_init()
+    defer scene_renderer_free(&scene_renderer)
+
     // TODO(ahi): Init GUI
     
     // TODO(ahi): Init entity manager
@@ -134,43 +136,16 @@ do_game :: proc() {
 
     // TODO(ahi): Init editor
 
-    // MODEL LOADER CHECK
-    model := asset.engine_model_load("gamedata/assets/models/DamagedHelmet.gltf")
-    defer asset.engine_model_free(&model)
+    scene := scene_create()
+    defer scene_free(&scene)
 
-    // Make camera
-    camera := free_cam_init()
+    helmet := scene_new_game_object(&scene)
+    helmet.transform = linalg.matrix4_translate_f32({ -1.5, 0, 0 })
+    game_object_init_render(helmet, "gamedata/assets/models/DamagedHelmet.gltf")
 
-    // Make game shaders
-    shaders := render.shader_create_standard("gamedata/shaders/geometry_vtx.glsl", "gamedata/shaders/geometry_frg.glsl")
-    defer render.shader_destroy(&shaders)
-
-    // Rando ass texture
-    texture := asset.engine_texture_load_simple("gamedata/assets/textures/Default_albedo.png")
-
-    gpu_texture := render.texture_init(i32(texture.handle.width), i32(texture.handle.height), render.Texture_Format.RGBA8)
-    defer render.texture_destroy(&gpu_texture)
-    render.texture_upload_shader_resource(&gpu_texture, i32(texture.handle.width), i32(texture.handle.height), &texture.handle.pixels)
-
-    asset.engine_texture_free(&texture)
-
-    // VAO, VBO and EBO for testing
-    input_layout := render.input_layout_init()
-    render.input_layout_bind(&input_layout)
-
-    vertex_buffer := render.buffer_create(len(model.meshes[0].vertices) * size_of(f32) * 8, render.GpuBuffer_Type.VERTEX)
-    defer render.buffer_free(&vertex_buffer)
-    render.buffer_bind(&vertex_buffer)
-    render.buffer_upload(&vertex_buffer, len(model.meshes[0].vertices) * size_of(f32) * 8, &model.meshes[0].vertices[0], 0)
-
-    index_buffer := render.buffer_create(len(model.meshes[0].indices) * size_of(u32), render.GpuBuffer_Type.INDEX)
-    defer render.buffer_free(&index_buffer)
-    render.buffer_bind(&index_buffer)
-    render.buffer_upload(&index_buffer, len(model.meshes[0].indices) * size_of(u32), &model.meshes[0].indices[0], 0)
-
-    render.input_layout_push_element(0, 3, size_of(asset.Gltf_Vertex), 0, render.Input_Layout_Element.FLOAT)
-    render.input_layout_push_element(1, 3, size_of(asset.Gltf_Vertex), size_of(f32) * 3, render.Input_Layout_Element.FLOAT)
-    render.input_layout_push_element(2, 2, size_of(asset.Gltf_Vertex), size_of(f32) * 6, render.Input_Layout_Element.FLOAT)
+    sci_fi_helmet := scene_new_game_object(&scene)
+    sci_fi_helmet.transform = linalg.matrix4_translate_f32({1.5, 0, 0})
+    game_object_init_render(sci_fi_helmet, "gamedata/assets/models/SciFiHelmet.gltf")
 
     log.infof("Hello from Untitled Horror Game! Current game version: %d.%d.%d",
                 MAJOR_VERSION,
@@ -178,11 +153,6 @@ do_game :: proc() {
                 MINOR_VERSION)
 
     game.last_frame = time.now()
-
-    file: audio.Music_File
-    audio.music_file_load(&file, "gamedata/assets/sfx/syncamore.wav")
-    defer audio.music_file_free(&file)
-    audio.music_file_play(&file)
 
     // Main loop
     loop: for {
@@ -224,24 +194,14 @@ do_game :: proc() {
         if !mouse_wheel_event {
             base.input_system_handle_wheel(0, 0)
         }
-
-        free_cam_input(&camera, dt)
-        free_cam_update(&camera, dt)
-
-        audio.audio_system_set_listener_info(camera.position, camera.front)
         
+        scene_update(&scene, dt)
+
         render.context_clear()
         render.context_clear_color(0.0, 0.0, 0.0, 1.0)
         render.context_viewport(game.window.width, game.window.height)
-        render.shader_bind(&shaders)
-        render.input_layout_bind(&input_layout)
-        render.buffer_bind(&vertex_buffer)
-        render.buffer_bind(&index_buffer)
-        render.texture_bind_shader_resource(&gpu_texture, 0)
-        render.shader_uniform_mat4(&shaders, "proj", &camera.projection[0][0])
-        render.shader_uniform_mat4(&shaders, "view", &camera.view[0][0])
-        render.shader_uniform_mat4(&shaders, "model", &model.meshes[0].transformation_matrix[0][0])
-        render.context_draw_indexed(i32(len(model.meshes[0].indices)))
+
+        scene_renderer_render(&scene_renderer, &scene)
 
         render.opengl_context_present(&game.gl_ctx)
     }
