@@ -4,11 +4,7 @@
 ## $Create Time: 25/12/2023 23:34
 ##=============================================================================//
 
-ifeq ($(OS),Windows_NT)
-	NAME = Game.exe
-else
-	NAME = Game
-endif
+NAME = Game.exe
 
 SRC = source
 
