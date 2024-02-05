@@ -55,6 +55,7 @@ Renderable_Component :: struct {
 Game_Object :: struct {
     name: string,
     id: util.UUID,
+    array_index: i32,
     transform: linalg.Matrix4f32,
 
     has_renderable_component: b32,
@@ -127,7 +128,7 @@ game_object_free_render :: proc(object: ^Game_Object) {
         return
     }
 
-    for i in 0..=object.renderable_component.mesh_count {
+    for i in 0..=(object.renderable_component.mesh_count-1) {
         render.buffer_free(&object.renderable_component.meshes[i].index_buffer)
         render.buffer_free(&object.renderable_component.meshes[i].vertex_buffer)
         free(object.renderable_component.meshes[i])
