@@ -91,7 +91,7 @@ free_cam_update :: proc(cam: ^Free_Camera, dt: f32) {
     cam.mouse_pos[1] = mouse_pos[1]
 
     cam.view = linalg.matrix4_look_at(cam.position, cam.position + cam.front, cam.world_up)
-    cam.projection = linalg.matrix4_perspective(cam.fov, f32(cam.width) / f32(cam.height), 0.01, 10000)
+    cam.projection = linalg.matrix4_perspective(cam.fov, f32(cam.width) / f32(cam.height), 0.05, 10000)
     cam.view_proj = cam.view * cam.projection
 }
 

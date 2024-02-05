@@ -56,6 +56,7 @@ scene_free :: proc(scene: ^Game_Scene) {
             game_object_free_render(&scene.objects[i])
         }
     }
+    delete(scene.objects)
 }
 
 scene_update :: proc(scene: ^Game_Scene, dt: f32) {

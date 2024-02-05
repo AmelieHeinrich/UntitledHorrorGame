@@ -19,11 +19,16 @@ Music_File :: struct {
     paused: b32
 }
 
-music_file_load :: proc(file: ^Music_File, path: string) {
+music_file_load :: proc(file: ^Music_File, path: string, spatialized: b32) {
     file.path = path
     new_string := strings.clone_to_cstring(path)
 
-    err := miniaudio.sound_init_from_file(&audio_system.engine, new_string, u32(miniaudio.sound_flags.STREAM | miniaudio.sound_flags.NO_SPATIALIZATION), nil, nil, &file.handle)
+    flags: u32 = u32(miniaudio.sound_flags.STREAM | miniaudio.sound_flags.NO_SPATIALIZATION)
+    if !spatialized {
+        flags = u32(miniaudio.sound_flags.STREAM)
+    }
+
+    err := miniaudio.sound_init_from_file(&audio_system.engine, new_string, flags, nil, nil, &file.handle)
     if err != miniaudio.result.SUCCESS {
         log.errorf("Failed to load music file: %s", path)
         log.error(err)
@@ -49,6 +54,10 @@ music_file_pause :: proc(file: ^Music_File) {
         music_file_play(file)
         file.paused = false
     }
+}
+
+music_file_set_position :: proc(file: ^Music_File, position: linalg.Vector3f32) {
+    miniaudio.sound_set_position(&file.handle, position.x, position.y, position.z)
 }
 
 music_file_free :: proc(file: ^Music_File) {

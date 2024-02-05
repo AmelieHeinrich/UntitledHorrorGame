@@ -56,6 +56,10 @@ Game_Object :: struct {
     name: string,
     id: util.UUID,
     array_index: i32,
+
+    position: linalg.Vector3f32,
+    rotation: linalg.Vector3f32,
+    scale: linalg.Vector3f32,
     transform: linalg.Matrix4f32,
 
     has_renderable_component: b32,
@@ -71,6 +75,11 @@ game_object_create :: proc(id: u64 = 0) -> Game_Object {
         object.id = util.UUID(id)
     }
     object.has_renderable_component = false
+
+    object.position = { 0, 0, 0 }
+    object.rotation = { 0, 0, 0 }
+    object.scale = { 1, 1, 1 }
+
     object.transform[0][0] = 1
     object.transform[1][1] = 1
     object.transform[2][2] = 1
@@ -91,6 +100,8 @@ game_object_init_render :: proc(object: ^Game_Object, model_path: string) {
     object.renderable_component.mesh_count = 0
 
     model := asset.engine_model_load(model_path)
+    defer asset.engine_model_free(&model)
+
     for mesh in model.meshes {
         gpu_mesh: ^Gpu_Mesh = new(Gpu_Mesh)
         

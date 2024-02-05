@@ -51,6 +51,10 @@ shader_unbind :: proc() {
 }
 
 shader_destroy :: proc(module: ^Shader_Module) {
+    for uniform in module.uniforms {
+        delete(uniform)
+    }
+    delete(module.uniforms)
     gl.DeleteProgram(module.program)
 }
 

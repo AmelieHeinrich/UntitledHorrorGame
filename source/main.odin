@@ -8,6 +8,7 @@ package game
 
 import "core:mem"
 import "core:log"
+import "core:fmt"
 
 main :: proc() {
     tracking_allocator: mem.Tracking_Allocator
@@ -22,9 +23,9 @@ main :: proc() {
 
     // Mem check
     for _, leak in tracking_allocator.allocation_map {
-        log.errorf("%v leaked %m\n", leak.location, leak.size)
+        fmt.printf("%v leaked %m\n", leak.location, leak.size)
     }
     for bad_free in tracking_allocator.bad_free_array {
-        log.errorf("%v allocation %p was freed badly\n", bad_free.location, bad_free.memory)
+        fmt.printf("%v allocation %p was freed badly\n", bad_free.location, bad_free.memory)
     }
 }

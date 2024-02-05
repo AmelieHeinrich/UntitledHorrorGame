@@ -180,4 +180,5 @@ engine_model_free :: proc(model: ^Engine_Model) {
         delete(mesh.vertices)
         delete(mesh.indices)
     }
+    delete(model.meshes)
 }

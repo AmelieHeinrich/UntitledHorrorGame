@@ -140,11 +140,15 @@ do_game :: proc() {
     defer scene_free(&scene)
 
     helmet := scene_new_game_object(&scene)
-    helmet.transform = linalg.matrix4_translate_f32({ -1.5, 0, 0 })
+    helmet.transform = linalg.matrix4_translate_f32({ -2.5, 0, 0 })
     game_object_init_render(helmet, "gamedata/assets/models/DamagedHelmet.gltf")
 
+    suzanne := scene_new_game_object(&scene)
+    suzanne.transform = linalg.matrix4_translate_f32({0, 0, 0})
+    game_object_init_render(suzanne, "gamedata/assets/models/Suzanne.gltf")
+
     sci_fi_helmet := scene_new_game_object(&scene)
-    sci_fi_helmet.transform = linalg.matrix4_translate_f32({1.5, 0, 0})
+    sci_fi_helmet.transform = linalg.matrix4_translate_f32({2.5, 0, 0})
     game_object_init_render(sci_fi_helmet, "gamedata/assets/models/SciFiHelmet.gltf")
 
     log.infof("Hello from Untitled Horror Game! Current game version: %d.%d.%d",

@@ -46,18 +46,19 @@ config_file_destroy :: proc(file: ^Config_File, path: string, data: rawptr = nil
         marshal_data = file.data
     }
 
-    data, err := json.marshal(marshal_data, opt)
+    out_data, err := json.marshal(marshal_data, opt)
     if err != nil {
         log.errorf("Failed to convert json data back to bytes")
         log.error(err)
         return
     }
-    defer delete(data)
+    defer delete(out_data)
 
-    ok := os.write_entire_file(path, data)
+    json.destroy_value(file.data)
+    delete(file.file_contents)
+
+    ok := os.write_entire_file(path, out_data)
     if !ok {
         log.errorf("Failed to write json string to file %s", path)
     }
-    json.destroy_value(file.data)
-    delete(file.file_contents)
 }
