@@ -1,8 +1,8 @@
 {
 	"window": {
 		"width": 1075,
-		"type": "windowed",
-		"height": 893
+		"height": 893,
+		"type": "windowed"
 	},
 	"renderer": {
 		"vsync": true,

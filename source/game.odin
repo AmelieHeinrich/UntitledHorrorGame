@@ -62,29 +62,6 @@ Game_State :: struct {
 game: Game_State
 
 do_game :: proc() {
-    // Init logger
-    if os.exists("gamedata/log.txt") {
-        os.remove("gamedata/log.txt")
-    }
-    // TODO: check values of os.S_IRUSR | os.S_IRGRP | os.S_IROTH so I can pipe it in for linux :3
-    handle, err := os.open("gamedata/log.txt", os.O_CREATE | os.O_RDWR)
-    if err != 0 {
-        fmt.eprintln("[ERROR] Failed to create log file!")
-        return
-    }
-    defer os.close(handle)
-
-    console_logger := log.create_console_logger()
-    defer log.destroy_console_logger(console_logger)
-
-    file_logger := log.create_file_logger(handle)
-    defer log.destroy_file_logger(&file_logger)
-
-    multi_logger := log.create_multi_logger(console_logger, file_logger)
-    defer log.destroy_multi_logger(&multi_logger)
-
-    context.logger = multi_logger
-
     // Init config file
     if !base.config_file_load(&game.config_file, "gamedata/game_settings.json") {
         log.error("Failed to load json settings file!")
