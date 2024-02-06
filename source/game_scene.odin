@@ -11,6 +11,8 @@ import "asset"
 import "audio"
 
 Game_Scene :: struct {
+    name: string,
+    path: string,
     camera: Free_Camera,
     objects: [dynamic]Game_Object
 }
@@ -47,15 +49,18 @@ scene_add_game_object :: proc(scene: ^Game_Scene, object: ^Game_Object) {
 }
 
 scene_free :: proc(scene: ^Game_Scene) {
-    if len(scene.objects) == 0 {
-        return
-    }
 
     for i in 0..=len(scene.objects)-1 {
+        if len(scene.objects) == 0 {
+            break
+        }
+        delete(scene.objects[i].name)
         if scene.objects[i].has_renderable_component {
             game_object_free_render(&scene.objects[i])
         }
     }
+    delete(scene.name)
+    delete(scene.path)
     delete(scene.objects)
 }
 

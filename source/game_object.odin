@@ -95,7 +95,7 @@ game_object_init_render :: proc(object: ^Game_Object, model_path: string) {
     }
 
     object.has_renderable_component = true
-    object.renderable_component.model_path = model_path
+    object.renderable_component.model_path = strings.clone(model_path)
     object.renderable_component.meshes = {}
     object.renderable_component.mesh_count = 0
 
@@ -144,4 +144,5 @@ game_object_free_render :: proc(object: ^Game_Object) {
         render.buffer_free(&object.renderable_component.meshes[i].vertex_buffer)
         free(object.renderable_component.meshes[i])
     }
+    delete(object.renderable_component.model_path)
 }
