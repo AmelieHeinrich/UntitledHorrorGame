@@ -7,3 +7,4 @@ build
 gamedata/log.txt
 .vscode
 ols.json
+imgui.ini

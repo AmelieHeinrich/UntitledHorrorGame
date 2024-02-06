@@ -18,6 +18,9 @@ import "core:math/linalg"
 
 // Vendor imports
 import SDL "vendor:sdl2"
+import "imgui"
+import "imgui/imgui_impl_opengl3"
+import "imgui/imgui_impl_sdl2"
 
 // Engine imports
 import "render"
@@ -56,7 +59,9 @@ Game_State :: struct {
     events: base.Event_System,
 
     last_frame: time.Time,
-    test: f32
+    test: f32,
+
+    editor_focused: b32
 }
 
 game: Game_State
@@ -101,20 +106,35 @@ do_game :: proc() {
     audio.audio_system_init()
     defer audio.audio_system_destroy()
     
-    // TODO(ahi): Init renderer
+    // Init ImGui
+    imgui.CHECKVERSION()
+    imgui.CreateContext(nil)
+    io := imgui.GetIO()
+    io.ConfigFlags += {.NavEnableKeyboard, .NavEnableGamepad}
+	when imgui.IMGUI_BRANCH == "docking" {
+		io.ConfigFlags += {.DockingEnable}
+		io.ConfigFlags += {.ViewportsEnable}
+
+		style := imgui.GetStyle()
+		style.WindowRounding = 0
+		style.Colors[imgui.Col.WindowBg].w =1
+	}
+	imgui.StyleColorsDark(nil)
+    imgui_impl_sdl2.InitForOpenGL(game.window.window, game.gl_ctx.gl_context)
+	imgui_impl_opengl3.Init(nil)
+
+    // Init renderer
     scene_renderer := scene_renderer_init()
     defer scene_renderer_free(&scene_renderer)
-
-    // TODO(ahi): Init GUI
     
-    // TODO(ahi): Init entity manager
+    // Init entity manager
+    scene := scene_deserialize("gamedata/scenes/test_scene.json")
+    defer scene_free(&scene)
 
     // TODO(ahi): Init game
 
-    // TODO(ahi): Init editor
-
-    scene := scene_deserialize("gamedata/scenes/test_scene.json")
-    defer scene_free(&scene)
+    // Init editor
+    scene_editor_init()
 
     log.infof("Hello from Untitled Horror Game! Current game version: %d.%d.%d",
                 MAJOR_VERSION,
@@ -132,6 +152,7 @@ do_game :: proc() {
         mouse_wheel_event := false
         event: SDL.Event
         for SDL.PollEvent(&event) {
+            imgui_impl_sdl2.ProcessEvent(&event)
             #partial switch event.type {
                 case .QUIT:
                     break loop
@@ -163,14 +184,31 @@ do_game :: proc() {
         if !mouse_wheel_event {
             base.input_system_handle_wheel(0, 0)
         }
-        
-        scene_update(&scene, dt)
+
+        scene_update(&scene, dt, !game.editor_focused)
 
         render.context_clear()
         render.context_clear_color(0.0, 0.0, 0.0, 1.0)
         render.context_viewport(game.window.width, game.window.height)
 
         scene_renderer_render(&scene_renderer, &scene)
+
+        imgui_impl_opengl3.NewFrame()
+        imgui_impl_sdl2.NewFrame()
+        imgui.NewFrame()
+
+        scene_editor_render(&scene, &game.editor_focused)
+
+        io := imgui.GetIO()
+        imgui.Render()
+        imgui_impl_opengl3.RenderDrawData(imgui.GetDrawData())
+        when imgui.IMGUI_BRANCH == "docking" {
+            backup_current_window := SDL.GL_GetCurrentWindow()
+            backup_current_context := SDL.GL_GetCurrentContext()
+            imgui.UpdatePlatformWindows()
+            imgui.RenderPlatformWindowsDefault()
+            SDL.GL_MakeCurrent(backup_current_window, backup_current_context);
+        }
 
         render.opengl_context_present(&game.gl_ctx)
     }

@@ -9,6 +9,8 @@ package game
 import "render"
 import "asset"
 
+import "core:math/linalg"
+
 Scene_Renderer :: struct {
     forward_shader: render.Shader_Module,
 }
@@ -29,7 +31,9 @@ scene_renderer_render :: proc(renderer: ^Scene_Renderer, scene: ^Game_Scene) {
     for object in scene.objects {
         if object.has_renderable_component {
             for j in 0..=(object.renderable_component.mesh_count-1) {
-                render.shader_uniform_mat4(&renderer.forward_shader, "model", &object.renderable_component.meshes[j].transform[0][0])
+                local_matrix := object.transform * object.renderable_component.meshes[j].transform
+
+                render.shader_uniform_mat4(&renderer.forward_shader, "model", &local_matrix[0][0])
                 render.input_layout_bind(&object.renderable_component.meshes[j].vertex_array)
                 render.buffer_bind(&object.renderable_component.meshes[j].vertex_buffer)
                 render.buffer_bind(&object.renderable_component.meshes[j].index_buffer)

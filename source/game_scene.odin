@@ -9,6 +9,9 @@ package game
 import "render"
 import "asset"
 import "audio"
+import "imgui"
+
+import "core:math/linalg"
 
 Game_Scene :: struct {
     name: string,
@@ -64,9 +67,28 @@ scene_free :: proc(scene: ^Game_Scene) {
     delete(scene.objects)
 }
 
-scene_update :: proc(scene: ^Game_Scene, dt: f32) {
-    free_cam_input(&scene.camera, dt)
+scene_update :: proc(scene: ^Game_Scene, dt: f32, update_input: b32) {
+    if update_input {
+        free_cam_input(&scene.camera, dt)
+    }
     free_cam_update(&scene.camera, dt)
+
+    // Update transforms
+    for i in 0..=len(scene.objects)-1 {
+        object: ^Game_Object = &scene.objects[i]
+
+        object.transform = linalg.matrix4_translate_f32({object.position.x, object.position.y, object.position.z})
+        if object.rotation.x != 0 {
+            object.transform *= linalg.matrix4_rotate_f32(linalg.to_radians(object.rotation.x), {1, 0, 0})
+        }
+        if object.rotation.y != 0 {
+            object.transform *= linalg.matrix4_rotate_f32(linalg.to_radians(object.rotation.y), {0, 1, 0})
+        }
+        if object.rotation.z != 0 {
+            object.transform *= linalg.matrix4_rotate_f32(linalg.to_radians(object.rotation.z), {0, 0, 1})
+        }
+        object.transform *= linalg.matrix4_scale_f32({object.scale.x, object.scale.y, object.scale.z})
+    }
 
     audio.audio_system_set_listener_info(scene.camera.position, scene.camera.front)
 }

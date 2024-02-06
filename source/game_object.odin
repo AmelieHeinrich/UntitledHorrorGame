@@ -57,9 +57,9 @@ Game_Object :: struct {
     id: util.UUID,
     array_index: i32,
 
-    position: linalg.Vector3f32,
-    rotation: linalg.Vector3f32,
-    scale: linalg.Vector3f32,
+    position: [3]f32,
+    rotation: [3]f32,
+    scale: [3]f32,
     transform: linalg.Matrix4f32,
 
     has_renderable_component: b32,

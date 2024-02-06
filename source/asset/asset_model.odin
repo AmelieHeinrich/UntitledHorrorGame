@@ -119,10 +119,10 @@ process_node :: proc(node: ^cgltf.node, model: ^Engine_Model) {
         }
 
         if node.has_rotation {
-            data.rotation.x = node.rotation[0]
-            data.rotation.y = node.rotation[1]
-            data.rotation.z = node.rotation[2]
-            data.rotation.w = node.rotation[3]
+            data.rotation.x = node.rotation[3]
+            data.rotation.y = node.rotation[2]
+            data.rotation.z = node.rotation[1]
+            data.rotation.w = node.rotation[0]
             data.transformation_matrix *= linalg.matrix4_from_quaternion_f32(data.rotation)
         }
 
