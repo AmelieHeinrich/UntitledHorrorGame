@@ -63,7 +63,12 @@ Game_Object :: struct {
     transform: linalg.Matrix4f32,
 
     has_renderable_component: b32,
-    renderable_component: Renderable_Component
+    renderable_component: Renderable_Component,
+
+    reload_mesh_next_frame: b32,
+    reload_texture_next_frame: b32,
+    reload_texture_type: Entity_Texture_Type,
+    reload_path: ^string
 }
 
 game_object_create :: proc(id: u64 = 0) -> Game_Object {
@@ -75,6 +80,7 @@ game_object_create :: proc(id: u64 = 0) -> Game_Object {
         object.id = util.UUID(id)
     }
     object.has_renderable_component = false
+    object.reload_mesh_next_frame = false
 
     object.position = { 0, 0, 0 }
     object.rotation = { 0, 0, 0 }
@@ -145,4 +151,65 @@ game_object_free_render :: proc(object: ^Game_Object) {
         free(object.renderable_component.meshes[i])
     }
     delete(object.renderable_component.model_path)
+
+    if object.renderable_component.albedo_texture.valid {
+        delete(object.renderable_component.albedo_texture.texture_path)
+    }
+
+    game_object_free_texture(object, Entity_Texture_Type.ALBEDO)
+
+    object.has_renderable_component = false
+}
+
+game_object_init_texture :: proc(object: ^Game_Object, texture_type: Entity_Texture_Type, path: string) {
+    texture_to_load: ^Entity_Texture_Info
+    
+    #partial switch object.reload_texture_type {
+        case .ALBEDO: {
+            texture_to_load = &object.renderable_component.albedo_texture
+        }
+    }
+
+    texture_to_load.texture_path = strings.clone(path)
+    texture_to_load.texture_data = asset.engine_texture_load_simple(path)
+    texture_to_load.valid = true
+    defer asset.engine_texture_free(&texture_to_load.texture_data)
+
+    texture_to_load.texture = render.texture_init(i32(texture_to_load.texture_data.handle.width), i32(texture_to_load.texture_data.handle.height), render.Texture_Format.RGBA8)
+    render.texture_upload_shader_resource(&texture_to_load.texture, i32(texture_to_load.texture_data.handle.width), i32(texture_to_load.texture_data.handle.height), &texture_to_load.texture_data.handle.pixels)
+}
+
+game_object_free_texture :: proc(object: ^Game_Object, texture_type: Entity_Texture_Type) {
+    texture_to_load: ^Entity_Texture_Info
+    
+    #partial switch object.reload_texture_type {
+        case .ALBEDO: {
+            texture_to_load = &object.renderable_component.albedo_texture
+        }
+    }
+
+    if texture_to_load.valid {
+        render.texture_destroy(&texture_to_load.texture)
+    }
+    texture_to_load.valid = false
+}
+
+game_object_cold_reload_mesh :: proc(object: ^Game_Object) {
+    if !object.has_renderable_component {
+        return
+    }
+
+    game_object_free_render(object)
+    game_object_init_render(object, object.reload_path^)
+    object.reload_mesh_next_frame = false
+}
+
+game_object_cold_reload_texture :: proc(object: ^Game_Object) {
+    if !object.has_renderable_component {
+        return
+    }
+
+    game_object_free_texture(object, object.reload_texture_type)
+    game_object_init_texture(object, object.reload_texture_type, object.reload_path^)
+    object.reload_texture_next_frame = false
 }

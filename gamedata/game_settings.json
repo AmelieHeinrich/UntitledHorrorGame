@@ -1,11 +1,11 @@
 {
 	"window": {
-		"type": "windowed",
+		"width": 2560,
 		"height": 1369,
-		"width": 2560
+		"type": "windowed"
 	},
 	"renderer": {
-		"api": "opengl",
-		"vsync": true
+		"vsync": true,
+		"api": "opengl"
 	}
 }

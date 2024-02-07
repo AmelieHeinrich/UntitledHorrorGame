@@ -20,7 +20,8 @@ Serializable_Entity :: struct {
     rotation: [3]f64,
     scale: [3]f64,
     renderable: b32,
-    modelPath: string
+    modelPath: string,
+    albedoPath: string
 }
 
 Serializable_Scene :: struct {
@@ -90,6 +91,10 @@ scene_deserialize :: proc(path: string) -> Game_Scene {
         // Renderable
         if entity_root["renderable"].(json.Boolean) {
             game_object_init_render(game_object, entity_root["modelPath"].(json.String))
+
+            if len(entity_root["albedoPath"].(json.String)) > 0 {
+                game_object_init_texture(game_object, Entity_Texture_Type.ALBEDO, entity_root["albedoPath"].(json.String))
+            }
         }
     }
 
@@ -125,6 +130,7 @@ scene_serialize :: proc(scene: ^Game_Scene, save_path: string = "") {
 
         serializable_entity.renderable = obj.has_renderable_component
         serializable_entity.modelPath = obj.renderable_component.model_path
+        serializable_entity.albedoPath = obj.renderable_component.albedo_texture.texture_path
 
         append(&write_scene.entities, serializable_entity)
     }

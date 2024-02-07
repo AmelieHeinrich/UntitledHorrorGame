@@ -92,3 +92,16 @@ scene_update :: proc(scene: ^Game_Scene, dt: f32, update_input: b32) {
 
     audio.audio_system_set_listener_info(scene.camera.position, scene.camera.front)
 }
+
+scene_process_reload :: proc(scene: ^Game_Scene) {
+    for i in 0..=len(scene.objects)-1 {
+        object: ^Game_Object = &scene.objects[i]
+
+        if object.reload_mesh_next_frame {
+            game_object_cold_reload_mesh(object)
+        }
+        if object.reload_texture_next_frame {
+            game_object_cold_reload_texture(object)
+        }
+    }
+}

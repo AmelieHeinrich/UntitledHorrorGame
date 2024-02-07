@@ -149,20 +149,24 @@ engine_model_load :: proc(path: string) -> Engine_Model {
 
     options: cgltf.options
 
-    data, res := cgltf.parse_file(options, strings.unsafe_string_to_cstring(path))
-    if res != cgltf.result.success {
-        log.errorf("Failed to parsed gltf file %s", path)
-        log.error(res)
-    } else {
-        log.debugf("Parsed gltf file %s", path)
-    }
+    safe_path := strings.clone_to_cstring(path)
+    defer delete(safe_path)
 
-    res = cgltf.load_buffers(options, data, strings.unsafe_string_to_cstring(path))
+    data, res := cgltf.parse_file(options, safe_path)
     if res != cgltf.result.success {
-        log.errorf("Failed to load gltf buffers from file %s", path)
+        log.errorf("Failed to parsed gltf file %s", safe_path)
         log.error(res)
     } else {
-        log.debugf("Loaded gltf buffers from file %s", path)
+        log.debugf("Parsed gltf file %s", safe_path)
+    }
+    defer cgltf.free(data)
+
+    res = cgltf.load_buffers(options, data, safe_path)
+    if res != cgltf.result.success {
+        log.errorf("Failed to load gltf buffers from file %s", safe_path)
+        log.error(res)
+    } else {
+        log.debugf("Loaded gltf buffers from file %s", safe_path)
     }
 
     scene := data.scene
@@ -171,7 +175,6 @@ engine_model_load :: proc(path: string) -> Engine_Model {
         process_node(node, &model)
     }
 
-    cgltf.free(data)
     return model
 }
 

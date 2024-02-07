@@ -72,7 +72,6 @@ do_game :: proc() {
         log.error("Failed to load json settings file!")
         return
     }
-    defer base.config_file_destroy(&game.config_file, "gamedata/game_settings.json")
 
     // Create window
     json.unmarshal(game.config_file.file_contents, &game.config)
@@ -185,6 +184,9 @@ do_game :: proc() {
             base.input_system_handle_wheel(0, 0)
         }
 
+        scene_process_reload(&scene);
+        scene_editor_clean()
+        
         scene_update(&scene, dt, !game.editor_focused)
 
         render.context_clear()
@@ -220,6 +222,7 @@ do_game :: proc() {
     window["width"] = json.Float(f32(game.window.width))
     window["height"] = json.Float(f32(game.window.height))
 
+    base.config_file_destroy(&game.config_file, "gamedata/game_settings.json")
     scene_serialize(&scene, "gamedata/scenes/test_scene.json")
 
     delete(game.config.window.type)

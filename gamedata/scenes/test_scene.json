@@ -2,9 +2,9 @@
 	"sceneName": "test_scene",
 	"entities": [
 		{
-			"name": "Damaged Helmet",
+			"name": "Sci-Fi Helmet",
 			"position": [
-				-2,
+				-1,
 				0,
 				0
 			],
@@ -19,12 +19,13 @@
 				1
 			],
 			"renderable": true,
-			"modelPath": "gamedata/assets/models/DamagedHelmet.gltf"
+			"modelPath": "gamedata/assets/models/SciFiHelmet.gltf",
+			"albedoPath": "gamedata/assets/textures/SciFiHelmet_BaseColor.png"
 		},
 		{
 			"name": "Suzanne",
 			"position": [
-				0,
+				1,
 				0,
 				0
 			],
@@ -39,27 +40,8 @@
 				1
 			],
 			"renderable": true,
-			"modelPath": "gamedata/assets/models/Suzanne.gltf"
-		},
-		{
-			"name": "Sci-Fi Helmet",
-			"position": [
-				1.5,
-				0,
-				0
-			],
-			"rotation": [
-				0,
-				0,
-				0
-			],
-			"scale": [
-				1,
-				1,
-				1
-			],
-			"renderable": true,
-			"modelPath": "gamedata/assets/models/SciFiHelmet.gltf"
+			"modelPath": "gamedata/assets/models/SciFiHelmet.gltf",
+			"albedoPath": "gamedata/assets/textures/SciFiHelmet_BaseColor.png"
 		}
 	]
 }

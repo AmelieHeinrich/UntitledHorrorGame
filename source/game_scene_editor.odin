@@ -8,16 +8,26 @@ package game
 
 import "imgui"
 import "core:strings"
+import "util"
 
 Scene_Editor_Data :: struct {
     selected_object: ^Game_Object,
-    object_selected: b32
+    object_selected: b32,
+    selected_file: string
 }
 
 scene_editor: Scene_Editor_Data
 
 scene_editor_init :: proc() {
     scene_editor.object_selected = false
+    scene_editor.selected_file = ""
+}
+
+scene_editor_clean :: proc() {
+    if len(scene_editor.selected_file) > 0 {
+        delete(scene_editor.selected_file)
+    }
+    scene_editor.selected_file = ""
 }
 
 scene_editor_render :: proc(scene: ^Game_Scene, focused: ^b32) {
@@ -48,11 +58,36 @@ scene_editor_render :: proc(scene: ^Game_Scene, focused: ^b32) {
     if scene_editor.object_selected {
         imgui.Separator()
         imgui.Text("Name: %s", scene_editor.selected_object.name)
+        
+        imgui.Separator()
         imgui.DragFloat3("Position", &scene_editor.selected_object.position)
         imgui.DragFloat3("Rotation", &scene_editor.selected_object.rotation)
         imgui.DragFloat3("Scale", &scene_editor.selected_object.scale)
-    }
+        
+        if scene_editor.selected_object.has_renderable_component {
+            imgui.Separator()
+            imgui.Text("Model: %s", scene_editor.selected_object.renderable_component.model_path)
+            if imgui.Button("Select Mesh...") {
+                scene_editor.selected_file = util.file_dialog_open(game.window.window, "")
+                if len(scene_editor.selected_file) > 0 {
+                    scene_editor.selected_object.reload_mesh_next_frame = true
+                    scene_editor.selected_object.reload_path = &scene_editor.selected_file
+                }
+            }
+            imgui.Separator()
 
+            imgui.Text("Albedo Texture: %s", scene_editor.selected_object.renderable_component.albedo_texture.texture_path)
+            imgui.SameLine()
+            if imgui.Button("Change") {
+                scene_editor.selected_file = util.file_dialog_open(game.window.window, "")
+                if len(scene_editor.selected_file) > 0 {
+                    scene_editor.selected_object.reload_texture_next_frame = true
+                    scene_editor.selected_object.reload_texture_type = Entity_Texture_Type.ALBEDO
+                    scene_editor.selected_object.reload_path = &scene_editor.selected_file
+                }
+            }
+        }
+    }
 
     imgui.End()
 }

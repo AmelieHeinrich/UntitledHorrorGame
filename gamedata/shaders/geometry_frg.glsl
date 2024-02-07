@@ -11,7 +11,9 @@ in vec3 fragment_normals;
 
 out vec4 pixel_color;
 
+uniform sampler2D diffuseTexture;
+
 void main()
 {
-    pixel_color = vec4(fragment_normals, 0.0);
+    pixel_color = texture(diffuseTexture, fragment_uvs);
 }
