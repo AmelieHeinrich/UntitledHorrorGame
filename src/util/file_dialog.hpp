@@ -11,4 +11,5 @@ class FileDialog
 {
 public:
     static std::string Open(const std::string& filter);
+    static std::string Save(const std::string& filter);
 };

@@ -11,7 +11,7 @@
 class SceneEditor
 {
 public:
-    static bool Manipulate(Ref<Scene> scene);
+    static bool Manipulate(Ref<Scene>& scene);
 
 private:
     struct SceneEditorData

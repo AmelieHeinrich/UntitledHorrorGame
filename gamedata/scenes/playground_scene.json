@@ -1,0 +1,26 @@
+{
+    "entities": [
+        {
+            "albedoPath": "gamedata/assets/textures/SciFiHelmet_Normal.png",
+            "modelPath": "gamedata/assets/models/SciFiHelmet.gltf",
+            "name": "New Entity",
+            "position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "renderable": true,
+            "rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        }
+    ],
+    "sceneName": "New Scene"
+}

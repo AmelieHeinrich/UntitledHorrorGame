@@ -39,7 +39,7 @@ SceneRenderer::SceneRenderer()
     _CameraBuffer = CreateRef<Buffer>(sizeof(glm::mat4) * 2, sizeof(glm::mat4), BufferType::Constant);
     _ModelBuffer = CreateRef<Buffer>(sizeof(glm::mat4), sizeof(glm::mat4), BufferType::Constant);
 
-    _ForwardSampler = CreateRef<Sampler>(Address::Border, Filter::Anisotropic, 1);
+    _ForwardSampler = CreateRef<Sampler>(Address::Mirror, Filter::Anisotropic, 1);
 }
 
 void SceneRenderer::Render(Ref<Scene> scene)

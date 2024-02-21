@@ -19,6 +19,8 @@ public:
     GameObject *NewObject();
     void AddObject(GameObject *object);
     void RemoveObject(GameObject *object);
+
+    std::string GetPath() { return _Path; }
 private:
     friend class SceneSerializer;
     friend class SceneRenderer;

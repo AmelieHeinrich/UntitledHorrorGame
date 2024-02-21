@@ -49,7 +49,7 @@ int main(void)
     state.lastFrame = Timer::GetGlobalTime();
 
     // Debug scene
-    Ref<Scene> scene = SceneSerializer::Deserialize("gamedata/scenes/test_scene.json");
+    Ref<Scene> scene = SceneSerializer::Deserialize(state.config["game"]["startupScene"]);
 
     // Game loop
     bool vsync = state.config["renderer"]["vsync"].template get<bool>();
@@ -89,7 +89,7 @@ int main(void)
     }
 
     // Write back config
-    SceneSerializer::Serialize(scene, "gamedata/scenes/test_scene.json");
+    SceneSerializer::Serialize(scene, scene->GetPath());
 
     // Cleanup
     RenderContext::ExitImGui();

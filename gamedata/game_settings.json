@@ -1,4 +1,7 @@
 {
+    "game": {
+        "startupScene": "gamedata/scenes/models_scene.json"
+    },
     "renderer": {
         "api": "d3d11",
         "vsync": true
