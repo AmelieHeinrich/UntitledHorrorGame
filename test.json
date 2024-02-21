@@ -1,0 +1,47 @@
+{
+    "entities": [
+        {
+            "albedoPath": "gamedata/assets/textures/SciFiHelmet_BaseColor.png",
+            "modelPath": "gamedata/assets/models/SciFiHelmet.gltf",
+            "name": "Sci-Fi Helmet",
+            "position": [
+                -1.5,
+                0.0,
+                0.0
+            ],
+            "renderable": true,
+            "rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "albedoPath": "gamedata/assets/textures/Suzanne_BaseColor.png",
+            "modelPath": "gamedata/assets/models/Suzanne.gltf",
+            "name": "Suzanne",
+            "position": [
+                1.5,
+                0.0,
+                0.0
+            ],
+            "renderable": true,
+            "rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        }
+    ],
+    "sceneName": "test_scene"
+}

@@ -1,11 +1,11 @@
 {
-	"window": {
-		"width": 2560,
-		"height": 1369,
-		"type": "windowed"
-	},
-	"renderer": {
-		"vsync": true,
-		"api": "opengl"
-	}
+    "renderer": {
+        "api": "d3d11",
+        "vsync": true
+    },
+    "window": {
+        "height": 1009,
+        "type": "windowed",
+        "width": 1920
+    }
 }

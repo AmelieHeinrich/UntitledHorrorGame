@@ -4,7 +4,7 @@ build
 
 # Development environment/Unrelated game files
 
-gamedata/log.txt
+log.txt
 .vscode
-ols.json
 imgui.ini
+.xmake
