@@ -29,5 +29,5 @@ private:
     std::string _Name = "";
     std::string _Path = "";
     FreeCamera _Camera;
-    std::vector<GameObject> _Objects;
+    std::vector<GameObject*> _Objects;
 };

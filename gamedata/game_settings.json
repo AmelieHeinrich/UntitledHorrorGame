@@ -1,6 +1,6 @@
 {
     "game": {
-        "startupScene": "gamedata/scenes/models_scene.json"
+        "startupScene": "gamedata/scenes/plaza_scene.json"
     },
     "renderer": {
         "api": "d3d11",

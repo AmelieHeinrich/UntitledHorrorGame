@@ -39,7 +39,7 @@ SceneRenderer::SceneRenderer()
     _CameraBuffer = CreateRef<Buffer>(sizeof(glm::mat4) * 2, sizeof(glm::mat4), BufferType::Constant);
     _ModelBuffer = CreateRef<Buffer>(sizeof(glm::mat4), sizeof(glm::mat4), BufferType::Constant);
 
-    _ForwardSampler = CreateRef<Sampler>(Address::Mirror, Filter::Anisotropic, 1);
+    _ForwardSampler = CreateRef<Sampler>(Address::Wrap, Filter::Anisotropic, 4);
 }
 
 void SceneRenderer::Render(Ref<Scene> scene)
@@ -58,15 +58,15 @@ void SceneRenderer::Render(Ref<Scene> scene)
     RenderContext::BindGraphicsVertexConstantBuffer(_CameraBuffer, 0);
 
     for (auto object : scene->_Objects) {
-        if (object.HasRenderable) {
-            for (auto mesh : object.Renderable.Meshes) {
+        if (object->HasRenderable) {
+            for (auto mesh : object->Renderable.Meshes) {
                 Ref<Texture> albedoTexture = _ErrorTexture;
 
-                if (object.Renderable.Textures[EntityTextureType::Albedo].Valid) {
-                    albedoTexture = object.Renderable.Textures[EntityTextureType::Albedo].Texture;
+                if (object->Renderable.Textures[EntityTextureType::Albedo].Valid) {
+                    albedoTexture = object->Renderable.Textures[EntityTextureType::Albedo].Texture;
                 }
 
-                _ModelBuffer->Upload(glm::value_ptr(object.Transform), sizeof(glm::mat4));
+                _ModelBuffer->Upload(glm::value_ptr(object->Transform), sizeof(glm::mat4));
                 RenderContext::BindGraphicsVertexConstantBuffer(_ModelBuffer, 1);
                 RenderContext::BindGraphicsSampler(_ForwardSampler, 0);
                 RenderContext::BindGraphicsShaderResource(albedoTexture, 0);

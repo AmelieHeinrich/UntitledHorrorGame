@@ -1,0 +1,89 @@
+{
+    "entities": [
+        {
+            "albedoPath": "gamedata/assets/textures/cobblestone.jpg",
+            "modelPath": "gamedata/assets/models/Cube.gltf",
+            "name": "Floor",
+            "position": [
+                0.0,
+                -2.4754652976989746,
+                0.0
+            ],
+            "renderable": true,
+            "rotation": [
+                0.0,
+                -0.0,
+                0.0
+            ],
+            "scale": [
+                7.0,
+                0.10000000149011612,
+                7.0
+            ]
+        },
+        {
+            "albedoPath": "gamedata/assets/textures/Fountain_BaseColor.png",
+            "modelPath": "gamedata/assets/models/Fountain.gltf",
+            "name": "Fountain",
+            "position": [
+                0.0,
+                -2.2459006309509277,
+                0.0
+            ],
+            "renderable": true,
+            "rotation": [
+                90.0,
+                -0.0,
+                0.0
+            ],
+            "scale": [
+                0.3998880982398987,
+                0.4000000059604645,
+                0.4000000059604645
+            ]
+        },
+        {
+            "albedoPath": "gamedata/assets/textures/StreetLamp_BaseColor.jpg",
+            "modelPath": "gamedata/assets/models/StreetLamp.gltf",
+            "name": "Street Lamp",
+            "position": [
+                -3.425384998321533,
+                3.2825357913970947,
+                2.4845943450927734
+            ],
+            "renderable": true,
+            "rotation": [
+                90.0,
+                -0.0,
+                0.0
+            ],
+            "scale": [
+                0.009944695979356766,
+                0.009999790228903294,
+                0.009999544359743595
+            ]
+        },
+        {
+            "albedoPath": "gamedata/assets/textures/Bench_BaseColor.png",
+            "modelPath": "gamedata/assets/models/Bench.gltf",
+            "name": "Bench",
+            "position": [
+                5.029645919799805,
+                -2.3162152767181396,
+                -1.904789924621582
+            ],
+            "renderable": true,
+            "rotation": [
+                -179.9998779296875,
+                4.9961748123168945,
+                -179.99989318847656
+            ],
+            "scale": [
+                0.4999983012676239,
+                0.5,
+                0.4999983012676239
+            ]
+        }
+    ],
+    "sceneName": "Plaza Scene"
+}

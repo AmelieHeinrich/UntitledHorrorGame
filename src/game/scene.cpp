@@ -10,6 +10,9 @@
 
 Scene::~Scene()
 {
+    for (auto object : _Objects) {
+        delete object;
+    }
     _Objects.clear();
 }
 
@@ -23,18 +26,19 @@ void Scene::Update(f64 dt)
 
 GameObject *Scene::NewObject()
 {
-    GameObject object;
-    object.ArrayIndex = _Objects.size();
+    GameObject* object = new GameObject;
+    object->ArrayIndex = _Objects.size();
     _Objects.push_back(object);
-    return &_Objects[object.ArrayIndex];
+    return object;
 }
 
 void Scene::AddObject(GameObject *object)
 {
-    _Objects.push_back(*object);
+    _Objects.push_back(object);
 }
 
 void Scene::RemoveObject(GameObject *object)
 {
-    _Objects.erase(_Objects.begin() + object->ArrayIndex);
+    _Objects.erase(std::find(_Objects.begin(), _Objects.end(), object));
+    delete object;
 }

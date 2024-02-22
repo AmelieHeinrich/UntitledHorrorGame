@@ -66,25 +66,25 @@ void SceneSerializer::Serialize(Ref<Scene> scene, const std::string& path)
     
     for (auto object : scene->_Objects) {
         nlohmann::json entity_root;
-        entity_root["name"] = object.Name;
+        entity_root["name"] = object->Name;
 
-        entity_root["position"][0] = object.Position.x;
-        entity_root["position"][1] = object.Position.y;
-        entity_root["position"][2] = object.Position.z;
+        entity_root["position"][0] = object->Position.x;
+        entity_root["position"][1] = object->Position.y;
+        entity_root["position"][2] = object->Position.z;
 
-        entity_root["rotation"][0] = object.Rotation.x;
-        entity_root["rotation"][1] = object.Rotation.y;
-        entity_root["rotation"][2] = object.Rotation.z;
+        entity_root["rotation"][0] = object->Rotation.x;
+        entity_root["rotation"][1] = object->Rotation.y;
+        entity_root["rotation"][2] = object->Rotation.z;
 
-        entity_root["scale"][0] = object.Scale.x;
-        entity_root["scale"][1] = object.Scale.y;
-        entity_root["scale"][2] = object.Scale.z;
+        entity_root["scale"][0] = object->Scale.x;
+        entity_root["scale"][1] = object->Scale.y;
+        entity_root["scale"][2] = object->Scale.z;
 
-        entity_root["renderable"] = object.HasRenderable;
-        if (object.HasRenderable) {
-            entity_root["modelPath"] = object.Renderable.ModelPath;
-            if (object.Renderable.Textures[EntityTextureType::Albedo].Valid) {
-                entity_root["albedoPath"] = object.Renderable.Textures[EntityTextureType::Albedo].Path;
+        entity_root["renderable"] = object->HasRenderable;
+        if (object->HasRenderable) {
+            entity_root["modelPath"] = object->Renderable.ModelPath;
+            if (object->Renderable.Textures[EntityTextureType::Albedo].Valid) {
+                entity_root["albedoPath"] = object->Renderable.Textures[EntityTextureType::Albedo].Path;
             } else {
                 entity_root["albedoPath"] = "";
             }

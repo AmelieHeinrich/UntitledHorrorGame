@@ -9,6 +9,7 @@
 #include "game.hpp"
 
 #include <core/logger.hpp>
+#include <core/input_system.hpp>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -22,6 +23,11 @@ SceneEditor::SceneEditorData SceneEditor::Data;
 bool SceneEditor::Manipulate(Ref<Scene>& scene)
 {
     bool focused = false;
+
+    if (Input::IsKeyPressed(GLFW_KEY_ESCAPE)) {
+        Data.SelectedObject = nullptr;
+        Data.ObjectSelected = false;
+    }
 
     // Guizmo context
     ImGui::SetNextWindowPos({0, 0});
@@ -118,7 +124,7 @@ bool SceneEditor::Manipulate(Ref<Scene>& scene)
     // Hierarchy panel
     {
         for (int i = 0; i < scene->_Objects.size(); i++) {
-           GameObject *object = &scene->_Objects[i];
+           GameObject *object = scene->_Objects[i];
            std::stringstream ss;
            ss << "> " << object->Name.c_str();
            if (ImGui::Selectable(ss.str().c_str())) {
