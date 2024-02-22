@@ -26,6 +26,22 @@ void GameObject::InitRender(const std::string& modelPath)
     }
 }
 
+void GameObject::InitRender(const CPUModel& model, const std::string& path)
+{
+    HasRenderable = true;
+    Renderable.ModelPath = path;
+
+    for (auto mesh : model.Meshes) {
+        GpuMesh gpu_mesh = {};
+        gpu_mesh.VertexBuffer = Buffer::CreateFromData(mesh.Vertices.data(), mesh.Vertices.size() * sizeof(Vertex), sizeof(Vertex), BufferType::Vertex);
+        gpu_mesh.IndexBuffer = Buffer::CreateFromData(mesh.Indices.data(), mesh.Indices.size() * sizeof(u32), sizeof(u32), BufferType::Index);
+        gpu_mesh.VertexCount = mesh.Vertices.size();
+        gpu_mesh.IndexCount = mesh.Indices.size();
+
+        Renderable.Meshes.push_back(gpu_mesh);
+    }
+}
+
 void GameObject::FreeRender()
 {
     if (!HasRenderable) {
@@ -33,17 +49,8 @@ void GameObject::FreeRender()
         return;
     }
 
-    for (auto mesh : Renderable.Meshes) {
-        mesh.VertexBuffer.reset();
-        mesh.IndexBuffer.reset();
-    }
     Renderable.Meshes.clear();
-
-    for (auto texture : Renderable.Textures) {
-        if (texture.second.Valid) {
-            texture.second.Texture.reset();
-        }
-    }
+    Renderable.Textures.clear();
 
     HasRenderable = false;
 }
@@ -63,6 +70,18 @@ void GameObject::InitTexture(EntityTextureType type, const std::string& path)
     Renderable.Textures[type].Texture = Texture::CreateFromImage(image);
 }
 
+void GameObject::InitTexture(EntityTextureType type, const Image& image, const std::string& path)
+{
+    if (!HasRenderable) {
+        LOG_WARN("Trying to init a texture on an object that doesn't have a render component!");
+        return;
+    }
+
+    Renderable.Textures[type].Valid = true;
+    Renderable.Textures[type].Path = path;
+    Renderable.Textures[type].Texture = Texture::CreateFromImage(image);
+}
+
 void GameObject::FreeTexture(EntityTextureType type)
 {
     if (!HasRenderable) {
@@ -70,7 +89,5 @@ void GameObject::FreeTexture(EntityTextureType type)
         return;
     }
 
-    if (Renderable.Textures[type].Valid) {
-        Renderable.Textures[type].Texture.reset();
-    }
+    Renderable.Textures.clear();
 }

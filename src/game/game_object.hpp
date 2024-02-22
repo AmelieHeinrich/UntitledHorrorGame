@@ -67,8 +67,10 @@ public:
 
 public:
     void InitRender(const std::string& modelPath);
+    void InitRender(const CPUModel& image, const std::string& path);
     void FreeRender();
     void InitTexture(EntityTextureType type, const std::string& path);
+    void InitTexture(EntityTextureType type, const Image& image, const std::string& path);
     void FreeTexture(EntityTextureType type);
 
 private:

@@ -45,6 +45,7 @@ struct GameState
 
     Ref<SceneRenderer> sceneRenderer;
     bool editorFocused;
+    bool fullscreen = false;
 
     f64 lastFrame;
 };

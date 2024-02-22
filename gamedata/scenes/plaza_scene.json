@@ -16,9 +16,9 @@
                 0.0
             ],
             "scale": [
-                7.0,
+                10.0,
                 0.10000000149011612,
-                7.0
+                10.0
             ]
         },
         {
@@ -27,7 +27,7 @@
             "name": "Fountain",
             "position": [
                 0.0,
-                -2.2459006309509277,
+                -2.3900325298309326,
                 0.0
             ],
             "renderable": true,
@@ -37,7 +37,7 @@
                 0.0
             ],
             "scale": [
-                0.3998880982398987,
+                0.3997970223426819,
                 0.4000000059604645,
                 0.4000000059604645
             ]
@@ -45,11 +45,11 @@
         {
             "albedoPath": "gamedata/assets/textures/StreetLamp_BaseColor.jpg",
             "modelPath": "gamedata/assets/models/StreetLamp.gltf",
-            "name": "Street Lamp",
+            "name": "Street Lamp 1",
             "position": [
                 -3.425384998321533,
                 3.2825357913970947,
-                2.4845943450927734
+                4.723488807678223
             ],
             "renderable": true,
             "rotation": [
@@ -58,7 +58,7 @@
                 0.0
             ],
             "scale": [
-                0.009944695979356766,
+                0.0099406186491251,
                 0.009999790228903294,
                 0.009999544359743595
             ]
@@ -66,7 +66,7 @@
         {
             "albedoPath": "gamedata/assets/textures/Bench_BaseColor.png",
             "modelPath": "gamedata/assets/models/Bench.gltf",
-            "name": "Bench",
+            "name": "Bench 1",
             "position": [
                 5.029645919799805,
                 -2.3162152767181396,
@@ -82,6 +82,90 @@
                 0.4999983012676239,
                 0.5,
                 0.4999983012676239
+            ]
+        },
+        {
+            "albedoPath": "gamedata/assets/textures/StreetLamp_BaseColor.jpg",
+            "modelPath": "gamedata/assets/models/StreetLamp.gltf",
+            "name": "Street Lamp 2",
+            "position": [
+                3.4809327125549316,
+                3.280574321746826,
+                4.629652500152588
+            ],
+            "renderable": true,
+            "rotation": [
+                -90.0,
+                -0.0,
+                179.99989318847656
+            ],
+            "scale": [
+                0.009996585547924042,
+                0.009999998845160007,
+                0.009999863803386688
+            ]
+        },
+        {
+            "albedoPath": "gamedata/assets/textures/Bench_BaseColor.png",
+            "modelPath": "gamedata/assets/models/Bench.gltf",
+            "name": "Bench 2",
+            "position": [
+                -4.470262050628662,
+                -2.372983932495117,
+                -1.9854061603546143
+            ],
+            "renderable": true,
+            "rotation": [
+                0.0,
+                -38.500675201416016,
+                0.0
+            ],
+            "scale": [
+                0.4999993145465851,
+                0.5,
+                0.4999993145465851
+            ]
+        },
+        {
+            "albedoPath": "gamedata/assets/textures/Bench_BaseColor.png",
+            "modelPath": "gamedata/assets/models/Bench.gltf",
+            "name": "Bench 3",
+            "position": [
+                1.674523949623108,
+                -2.3162152767181396,
+                5.749518871307373
+            ],
+            "renderable": true,
+            "rotation": [
+                -0.0003003182355314493,
+                81.59696960449219,
+                -0.0005661781178787351
+            ],
+            "scale": [
+                0.4999958574771881,
+                0.4999999701976776,
+                0.4999958574771881
+            ]
+        },
+        {
+            "albedoPath": "gamedata/assets/textures/StreetLamp_BaseColor.jpg",
+            "modelPath": "gamedata/assets/models/StreetLamp.gltf",
+            "name": "Street Lamp 3",
+            "position": [
+                1.5685921907424927,
+                3.280810832977295,
+                -4.993523597717285
+            ],
+            "renderable": true,
+            "rotation": [
+                -89.9998779296875,
+                -70.19963836669922,
+                179.99989318847656
+            ],
+            "scale": [
+                0.009995021857321262,
+                0.009999998845160007,
+                0.009999863803386688
             ]
         }
     ],

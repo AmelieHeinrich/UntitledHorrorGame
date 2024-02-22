@@ -6,6 +6,7 @@
 #include "window.hpp"
 #include "logger.hpp"
 #include "input_system.hpp"
+#include "game.hpp"
 
 #include <game.hpp>
 #include <renderer/context.hpp>
@@ -91,6 +92,21 @@ void Window::PollSize(i32 *width, i32 *height)
 {
     if (_Window) {
         glfwGetWindowSize(_Window, width, height);
+    }
+}
+
+void Window::SetFullscreen(bool fullscreen)
+{
+    if (fullscreen) {
+        GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+        const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+        glfwSetWindowMonitor(_Window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+        _Width = mode->width;
+        _Height = mode->height;
+        state.width = mode->width;
+        state.height = mode->height;
+    } else {
+        glfwSetWindowMonitor(_Window, NULL, 0, 0, _Width, _Height, 0);
     }
 }
 

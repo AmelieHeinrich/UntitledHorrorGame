@@ -14,7 +14,7 @@ Image::~Image()
 
 void Image::Destroy()
 {
-    if (Bytes) {
+    if (Bytes != nullptr) {
         delete[] Bytes;
         Bytes = nullptr;
     }

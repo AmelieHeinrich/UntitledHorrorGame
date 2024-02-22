@@ -40,9 +40,9 @@ bool SceneEditor::Manipulate(Ref<Scene>& scene)
         ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
 
         ImGuizmo::RecomposeMatrixFromComponents(glm::value_ptr(Data.SelectedObject->Position),
-                                              glm::value_ptr(Data.SelectedObject->Rotation),
-                                              glm::value_ptr(Data.SelectedObject->Scale),
-                                              glm::value_ptr(Data.SelectedObject->Transform));
+                                                glm::value_ptr(Data.SelectedObject->Rotation),
+                                                glm::value_ptr(Data.SelectedObject->Scale),
+                                                glm::value_ptr(Data.SelectedObject->Transform));
 
         focused = ImGuizmo::Manipulate(glm::value_ptr(scene->_Camera.View()),
                              glm::value_ptr(scene->_Camera.Projection()),
@@ -152,6 +152,9 @@ bool SceneEditor::Manipulate(Ref<Scene>& scene)
 
             if (ImGui::Button("Remove Entity")) {
                 removeEntity = true;
+            }
+            if (ImGui::Button("Duplicate Entity")) {
+                scene->DuplicateObject(Data.SelectedObject);
             }
 
             ImGui::Separator();

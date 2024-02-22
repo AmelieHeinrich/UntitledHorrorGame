@@ -5,10 +5,22 @@
 
 #include "scene_serializer.hpp"
 
+#include <unordered_map>
+#include <string>
+
 #include <core/file_system.hpp>
+
+#include <imgui/imgui.h>
+#include <imguizmo/ImGuizmo.h>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 Ref<Scene> SceneSerializer::Deserialize(const std::string& path)
 {
+    std::unordered_map<std::string, CPUModel*> modelCache;
+    std::unordered_map<std::string, Image*> imageCache;
+
     nlohmann::json root = FileSystem::ParseJSON(path);
 
     Ref<Scene> scene = CreateRef<Scene>();
@@ -35,24 +47,41 @@ Ref<Scene> SceneSerializer::Deserialize(const std::string& path)
 
         object->HasRenderable = entity_root["renderable"].template get<bool>();
         if (object->HasRenderable) {
-            object->InitRender(entity_root["modelPath"]);
+            if (modelCache.count(entity_root["modelPath"])) {
+                object->InitRender(*modelCache[entity_root["modelPath"]], entity_root["modelPath"]);
+            } else {
+                CPUModel* model = new CPUModel;
+                model->Load(entity_root["modelPath"]);
+                modelCache[entity_root["modelPath"]] = model;
+
+                object->InitRender(*model, entity_root["modelPath"]);
+            }
+
             if (entity_root["albedoPath"].size() > 0) {
-                object->InitTexture(EntityTextureType::Albedo, entity_root["albedoPath"]);
+                if (imageCache.count(entity_root["albedoPath"])) {
+                    object->InitTexture(EntityTextureType::Albedo, *imageCache[entity_root["albedoPath"]], entity_root["albedoPath"]);
+                } else {
+                    Image* image = new Image;
+                    image->LoadFromFile(entity_root["albedoPath"]);
+                    imageCache[entity_root["albedoPath"]] = image;
+
+                    object->InitTexture(EntityTextureType::Albedo, *image, entity_root["albedoPath"]);
+                }
             }
         }
 
         object->Transform = glm::mat4(1.0f);
-        object->Transform = glm::translate(glm::mat4(1.0f), object->Position);
-        if (object->Rotation.x != 0.0f) {
-            object->Transform *= glm::rotate(glm::mat4(1.0f), glm::radians(object->Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-        }
-        if (object->Rotation.y != 0.0f) {
-            object->Transform *= glm::rotate(glm::mat4(1.0f), glm::radians(object->Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-        }
-        if (object->Rotation.z != 0.0f) {
-            object->Transform *= glm::rotate(glm::mat4(1.0f), glm::radians(object->Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-        }
-        object->Transform *= glm::scale(glm::mat4(1.0f), object->Scale);
+        ImGuizmo::RecomposeMatrixFromComponents(glm::value_ptr(object->Position),
+                                                glm::value_ptr(object->Rotation),
+                                                glm::value_ptr(object->Scale),
+                                                glm::value_ptr(object->Transform));
+    }
+
+    for (std::pair<std::string, CPUModel*> pair : modelCache) {
+        delete pair.second;
+    }
+    for (std::pair<std::string, Image*> pair : imageCache) {
+        delete pair.second;
     }
 
     return scene;

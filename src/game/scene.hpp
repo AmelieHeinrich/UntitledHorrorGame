@@ -17,6 +17,7 @@ public:
     void Update(f64 dt);
 
     GameObject *NewObject();
+    GameObject *DuplicateObject(GameObject *object);
     void AddObject(GameObject *object);
     void RemoveObject(GameObject *object);
 

@@ -1,0 +1,26 @@
+{
+    "entities": [
+        {
+            "albedoPath": "gamedata/assets/textures/marble.jpg",
+            "modelPath": "gamedata/assets/models/Cube.gltf",
+            "name": "Model",
+            "position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "renderable": true,
+            "rotation": [
+                0.0,
+                -0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        }
+    ],
+    "sceneName": "Single Model"
+}

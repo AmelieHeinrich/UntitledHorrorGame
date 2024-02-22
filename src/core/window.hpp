@@ -19,8 +19,12 @@ public:
     void Update();
     void PollSize(i32 *width, i32 *height);
 
+    void SetFullscreen(bool fullscreen);
+
     GLFWwindow* GetGLFWWindow() { return _Window; }
     void* GetNativeWindow();
 private:
     GLFWwindow *_Window;
+    i32 _Width;
+    i32 _Height;
 };
