@@ -6,22 +6,68 @@
 #include "scene_editor.hpp"
 #include "scene_serializer.hpp"
 #include "reload_queue.hpp"
+#include "game.hpp"
 
 #include <core/logger.hpp>
 
-#include <imgui/imgui.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 #include <util/file_dialog.hpp>
+
 #include <sstream>
 
 SceneEditor::SceneEditorData SceneEditor::Data;
 
 bool SceneEditor::Manipulate(Ref<Scene>& scene)
 {
+    bool focused = false;
+
+    // Guizmo context
+    ImGui::SetNextWindowPos({0, 0});
+    ImGui::SetNextWindowSize({f32(state.width), f32(state.height)});
+    ImGui::Begin("ImGuizmo Context", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoInputs);
+    if (Data.ObjectSelected) {
+        ImGuiIO& io = ImGui::GetIO();
+        ImGuizmo::SetOrthographic(false);
+        ImGuizmo::SetDrawlist();
+        ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
+
+        ImGuizmo::RecomposeMatrixFromComponents(glm::value_ptr(Data.SelectedObject->Position),
+                                              glm::value_ptr(Data.SelectedObject->Rotation),
+                                              glm::value_ptr(Data.SelectedObject->Scale),
+                                              glm::value_ptr(Data.SelectedObject->Transform));
+
+        focused = ImGuizmo::Manipulate(glm::value_ptr(scene->_Camera.View()),
+                             glm::value_ptr(scene->_Camera.Projection()),
+                             Data.Operation,
+                             ImGuizmo::MODE::WORLD,
+                             glm::value_ptr(Data.SelectedObject->Transform),
+                             nullptr,
+                             nullptr);
+
+        ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(Data.SelectedObject->Transform),
+                                              glm::value_ptr(Data.SelectedObject->Position),
+                                              glm::value_ptr(Data.SelectedObject->Rotation),
+                                              glm::value_ptr(Data.SelectedObject->Scale));
+    }
+    ImGui::End();
+
     ImGui::Begin("Scene Panel");
-    bool focused = ImGui::IsWindowFocused();
+    focused = focused || ImGui::IsWindowFocused();
+
+    // Guizmo control
+    {
+        if (ImGui::RadioButton("Translate", Data.Operation == ImGuizmo::OPERATION::TRANSLATE))
+            Data.Operation = ImGuizmo::OPERATION::TRANSLATE;
+        ImGui::SameLine();
+        if (ImGui::RadioButton("Scale", Data.Operation == ImGuizmo::OPERATION::SCALE))
+            Data.Operation = ImGuizmo::OPERATION::SCALE;
+        ImGui::SameLine();
+        if (ImGui::RadioButton("Rotate", Data.Operation == ImGuizmo::OPERATION::ROTATE))
+            Data.Operation = ImGuizmo::OPERATION::ROTATE;
+    }
+    ImGui::Separator();
 
     // Scene dialogs
     {

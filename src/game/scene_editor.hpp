@@ -8,6 +8,9 @@
 #include "game_object.hpp"
 #include "scene.hpp"
 
+#include <imgui/imgui.h>
+#include <imguizmo/ImGuizmo.h>
+
 class SceneEditor
 {
 public:
@@ -18,7 +21,7 @@ private:
     {
         GameObject* SelectedObject = nullptr;
         bool ObjectSelected = false;
-        std::string SelectedFile; // NOTE(ahi): For hot reloading purposes!!
+        ImGuizmo::OPERATION Operation = ImGuizmo::OPERATION::TRANSLATE;
     };
 
     static SceneEditorData Data;

@@ -11,6 +11,7 @@
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_dx11.h>
 #include <imgui/imgui_impl_glfw.h>
+#include <imguizmo/ImGuizmo.h>
 
 extern "C" 
 {
@@ -54,11 +55,6 @@ void RenderContext::InitImGui()
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-
-    ImGuiStyle& style = ImGui::GetStyle();
-    style.WindowRounding = 0;
-    style.Colors[ImGuiCol_WindowBg].w = 1;
     
     ImGui::StyleColorsDark();
 
@@ -78,6 +74,7 @@ void RenderContext::BeginUI()
     ImGui_ImplDX11_NewFrame();
     ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
+    ImGuizmo::BeginFrame();
 }
 
 void RenderContext::EndUI()
@@ -88,12 +85,6 @@ void RenderContext::EndUI()
 	// Rendering
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-
-	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-	{
-		ImGui::UpdatePlatformWindows();
-		ImGui::RenderPlatformWindowsDefault();
-	}
 }
 
 void RenderContext::Exit()

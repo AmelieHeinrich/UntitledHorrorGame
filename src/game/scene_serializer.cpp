@@ -40,6 +40,19 @@ Ref<Scene> SceneSerializer::Deserialize(const std::string& path)
                 object->InitTexture(EntityTextureType::Albedo, entity_root["albedoPath"]);
             }
         }
+
+        object->Transform = glm::mat4(1.0f);
+        object->Transform = glm::translate(glm::mat4(1.0f), object->Position);
+        if (object->Rotation.x != 0.0f) {
+            object->Transform *= glm::rotate(glm::mat4(1.0f), glm::radians(object->Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+        }
+        if (object->Rotation.y != 0.0f) {
+            object->Transform *= glm::rotate(glm::mat4(1.0f), glm::radians(object->Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+        }
+        if (object->Rotation.z != 0.0f) {
+            object->Transform *= glm::rotate(glm::mat4(1.0f), glm::radians(object->Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+        }
+        object->Transform *= glm::scale(glm::mat4(1.0f), object->Scale);
     }
 
     return scene;
