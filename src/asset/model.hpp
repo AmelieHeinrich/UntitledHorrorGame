@@ -18,6 +18,18 @@
 
 #include <core/core.hpp>
 
+struct BoundingBox
+{
+    glm::vec3 Min;
+    glm::vec3 Max;
+};
+
+struct BoundingSphere
+{
+    glm::vec3 Center;
+    f32 Radius;
+};
+
 struct Vertex
 {
     glm::vec3 Position;
@@ -30,10 +42,15 @@ struct MeshData
     std::vector<Vertex> Vertices;
     std::vector<u32> Indices;
 
+    BoundingBox AABB;
+    BoundingSphere Sphere;
+
     glm::vec3 Translation;
     glm::vec3 Scale;
     glm::quat Rotation;
     glm::mat4 Transform;
+
+
 };
 
 class CPUModel

@@ -1,0 +1,47 @@
+{
+    "entities": [
+        {
+            "albedoPath": "gamedata/assets/textures/test_texture.png",
+            "modelPath": "gamedata/assets/models/Cube.gltf",
+            "name": "Test Cube",
+            "position": [
+                -1.7032592296600342,
+                0.8149868249893188,
+                0.0
+            ],
+            "renderable": true,
+            "rotation": [
+                0.0,
+                -0.0,
+                0.0
+            ],
+            "scale": [
+                0.5,
+                0.5,
+                0.5
+            ]
+        },
+        {
+            "albedoPath": "gamedata/assets/textures/marble.jpg",
+            "modelPath": "gamedata/assets/models/Cube.gltf",
+            "name": "Test Cube",
+            "position": [
+                0.0,
+                -2.098034143447876,
+                0.0
+            ],
+            "renderable": true,
+            "rotation": [
+                0.0,
+                -0.0,
+                0.0
+            ],
+            "scale": [
+                5.821320056915283,
+                0.12589499354362488,
+                8.108415603637695
+            ]
+        }
+    ],
+    "sceneName": "Physics Test"
+}
