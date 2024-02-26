@@ -48,11 +48,17 @@ MeshData CPUModel::ProcessMesh(aiMesh *mesh, const aiScene *scene)
 {
     MeshData out;
 
+    out.AABB.Min = glm::vec3(FLT_MAX);
+    out.AABB.Max = glm::vec3(FLT_MIN);
+
     for (u32 i = 0; i < mesh->mNumVertices; i++) {
         Vertex vertex;
         vertex.Position.x = mesh->mVertices[i].x;
         vertex.Position.y = mesh->mVertices[i].y;
         vertex.Position.z = mesh->mVertices[i].z;
+
+        out.AABB.Min = glm::min(vertex.Position, out.AABB.Min);
+        out.AABB.Max = glm::max(vertex.Position, out.AABB.Max);
 
         if (mesh->HasNormals())
         {
@@ -65,14 +71,6 @@ MeshData CPUModel::ProcessMesh(aiMesh *mesh, const aiScene *scene)
         {
             vertex.UVs.x = mesh->mTextureCoords[0][i].x;
             vertex.UVs.y = mesh->mTextureCoords[0][i].y;
-            
-            //vertex.tangent.x = mesh->mTangents[i].x;
-            //vertex.tangent.y = mesh->mTangents[i].y;
-            //vertex.tangent.z = mesh->mTangents[i].z;
-            //
-            //vertex.bitangent.x = mesh->mBitangents[i].x;
-            //vertex.bitangent.y = mesh->mBitangents[i].y;
-            //vertex.bitangent.z = mesh->mBitangents[i].z;
         }
         else
             vertex.UVs = glm::vec2(0.0f);

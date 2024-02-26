@@ -22,6 +22,7 @@ private:
         GameObject* SelectedObject = nullptr;
         bool ObjectSelected = false;
         ImGuizmo::OPERATION Operation = ImGuizmo::OPERATION::TRANSLATE;
+        bool DrawGrid = false;
     };
 
     static SceneEditorData Data;

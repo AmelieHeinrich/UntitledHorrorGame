@@ -43,14 +43,11 @@ struct MeshData
     std::vector<u32> Indices;
 
     BoundingBox AABB;
-    BoundingSphere Sphere;
 
     glm::vec3 Translation;
     glm::vec3 Scale;
     glm::quat Rotation;
     glm::mat4 Transform;
-
-
 };
 
 class CPUModel

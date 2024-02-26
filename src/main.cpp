@@ -28,7 +28,6 @@ int main(void)
     
     // Create window
     state.window = CreateRef<Window>(state.width, state.height);
-    LOG_INFO("Created window!");
 
     // Input
     Input::Init();
@@ -37,10 +36,12 @@ int main(void)
     RenderContext::Init();
     RenderContext::AttachWindow(state.window);
     RenderContext::InitImGui();
-    LOG_INFO("Created render context!");
 
     // Create scene renderer
     state.sceneRenderer = CreateRef<SceneRenderer>();
+
+    // Initialize physics
+    PhysicsSystem::Init();
 
     // Finalize initialisation
     LOG_INFO("Hello from ALLTH! Current game version: 0.0.1");
@@ -92,6 +93,7 @@ int main(void)
     SceneSerializer::Serialize(scene, scene->GetPath());
 
     // Cleanup
+    PhysicsSystem::Exit();
     RenderContext::ExitImGui();
     RenderContext::Exit();
 

@@ -62,9 +62,6 @@ public:
 
     bool HasRenderable = false;
     RenderableComponent Renderable;
-
-    // TODO(ahi): Hot reload stuff
-
 public:
     void InitRender(const std::string& modelPath);
     void InitRender(const CPUModel& image, const std::string& path);

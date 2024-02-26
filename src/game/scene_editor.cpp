@@ -22,7 +22,9 @@ SceneEditor::SceneEditorData SceneEditor::Data;
 
 bool SceneEditor::Manipulate(Ref<Scene>& scene)
 {
+    glm::mat4 identity(1.0f);
     bool focused = false;
+    ImGuiIO& io = ImGui::GetIO();
 
     if (Input::IsKeyPressed(GLFW_KEY_ESCAPE)) {
         Data.SelectedObject = nullptr;
@@ -33,12 +35,17 @@ bool SceneEditor::Manipulate(Ref<Scene>& scene)
     ImGui::SetNextWindowPos({0, 0});
     ImGui::SetNextWindowSize({f32(state.width), f32(state.height)});
     ImGui::Begin("ImGuizmo Context", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoInputs);
-    if (Data.ObjectSelected) {
-        ImGuiIO& io = ImGui::GetIO();
-        ImGuizmo::SetOrthographic(false);
-        ImGuizmo::SetDrawlist();
-        ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
 
+    ImGuizmo::SetOrthographic(false);
+    ImGuizmo::SetDrawlist();
+    ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
+    if (Data.DrawGrid) {
+        ImGuizmo::DrawGrid(glm::value_ptr(scene->_Camera.View()),
+                           glm::value_ptr(scene->_Camera.Projection()),
+                           glm::value_ptr(identity),
+                           100.0f);
+    }
+    if (Data.ObjectSelected) {
         ImGuizmo::RecomposeMatrixFromComponents(glm::value_ptr(Data.SelectedObject->Position),
                                                 glm::value_ptr(Data.SelectedObject->Rotation),
                                                 glm::value_ptr(Data.SelectedObject->Scale),
@@ -73,6 +80,9 @@ bool SceneEditor::Manipulate(Ref<Scene>& scene)
         if (ImGui::RadioButton("Rotate", Data.Operation == ImGuizmo::OPERATION::ROTATE))
             Data.Operation = ImGuizmo::OPERATION::ROTATE;
     }
+    ImGui::Separator();
+
+    ImGui::Checkbox("Draw Grid", &Data.DrawGrid);
     ImGui::Separator();
 
     // Scene dialogs
@@ -119,24 +129,6 @@ bool SceneEditor::Manipulate(Ref<Scene>& scene)
             }
         }
         ImGui::Separator();
-    }
-
-    // Hierarchy panel
-    {
-        for (int i = 0; i < scene->_Objects.size(); i++) {
-           GameObject *object = scene->_Objects[i];
-           std::stringstream ss;
-           ss << "> " << object->Name.c_str();
-           if (ImGui::Selectable(ss.str().c_str())) {
-               Data.ObjectSelected = true;
-               Data.SelectedObject = object;
-           }
-        }
-
-        if (ImGui::Button("New Entity")) {
-            GameObject *object = scene->NewObject();
-            object->Name = "New Entity";
-        }
     }
 
     // Scene panel
@@ -207,5 +199,24 @@ bool SceneEditor::Manipulate(Ref<Scene>& scene)
     }
 
     ImGui::End();
+
+    ImGui::Begin("Entity List");
+    focused = focused || ImGui::IsWindowFocused();
+    if (ImGui::Button("New Entity")) {
+        GameObject *object = scene->NewObject();
+        object->Name = "New Entity";
+    }
+
+    for (int i = 0; i < scene->_Objects.size(); i++) {
+       GameObject *object = scene->_Objects[i];
+       std::stringstream ss;
+       ss << "> " << object->Name.c_str();
+       if (ImGui::Selectable(ss.str().c_str())) {
+           Data.ObjectSelected = true;
+           Data.SelectedObject = object;
+       }
+    }
+    ImGui::End();
+
     return focused;
 }
