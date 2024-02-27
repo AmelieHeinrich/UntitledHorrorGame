@@ -24,6 +24,10 @@ xmake run
 - Scene system with game objects
 - Scene editor through ImGui, ImGuizmo
 - Free Camera to navigate through the world
+- Very basic render graph implementation with the following construction:
+    - Forward pass
+    - FXAA pass
+    - Composition pass
 
 ## Bugs
 
@@ -46,7 +50,7 @@ xmake run
     - Add simple lighting
     - Point lights, area lights, cone lights
     - Forward+ or deferred
-    - Skybox
+    - Skybox from a .hdr file
     - Eye adaptation
     - Instancing
     - Fog (toggable for open/closed maps)
