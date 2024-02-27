@@ -9,6 +9,7 @@
 #include <memory>
 
 #include "core.hpp"
+#include "memory_tracker.hpp"
 
 class Logger
 {

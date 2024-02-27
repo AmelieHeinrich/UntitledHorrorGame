@@ -7,6 +7,7 @@
 #include "scene_serializer.hpp"
 #include "reload_queue.hpp"
 #include "game.hpp"
+#include "core/memory_tracker.hpp"
 
 #include <core/logger.hpp>
 #include <core/input_system.hpp>
@@ -215,6 +216,17 @@ bool SceneEditor::Manipulate(Ref<Scene>& scene)
            Data.ObjectSelected = true;
            Data.SelectedObject = object;
        }
+    }
+    ImGui::End();
+
+    ImGui::Begin("Statistics");
+    focused = focused || ImGui::IsWindowFocused();
+    if (ImGui::TreeNode("Memory Footprint")) {
+        ImGui::Text("ASSETS: %fmb", BYTES_TO_MEGABYTES(MemoryTracker::GetUsedMemory(MemoryDomain::ASSETS)));
+        ImGui::Text("SCENE: %fmb", BYTES_TO_MEGABYTES(MemoryTracker::GetUsedMemory(MemoryDomain::SCENE)));
+        ImGui::Text("TEXTURES: %fgb", BYTES_TO_GIGABYTES(MemoryTracker::GetUsedMemory(MemoryDomain::TEXTURES)));
+        ImGui::Text("BUFFERS: %fgb", BYTES_TO_GIGABYTES(MemoryTracker::GetUsedMemory(MemoryDomain::BUFFERS)));
+        ImGui::TreePop();
     }
     ImGui::End();
 

@@ -47,13 +47,17 @@ private:
     friend class SwapChain;
     friend class RenderContext;
 
+    void ComputeTextureSize();
+
     TextureType _Type;
+    TextureLayout _Layout;
     ID3D11Texture2D* _Texture = nullptr;
     bool _Mips = false;
 
     DXGI_FORMAT _Format;
     int _Width;
     int _Height;
+    i64 _Size;
 
     ID3D11RenderTargetView* _RTV = nullptr;
     ID3D11DepthStencilView* _DSV = nullptr;

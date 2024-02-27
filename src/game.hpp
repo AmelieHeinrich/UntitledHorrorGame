@@ -16,6 +16,7 @@
 #include "core/file_system.hpp"
 #include "core/input_system.hpp"
 #include "core/timer.hpp"
+#include "core/memory_tracker.hpp"
 
 #include "game/free_camera.hpp"
 #include "game/game_object.hpp"

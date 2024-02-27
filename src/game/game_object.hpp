@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <core/memory_tracker.hpp>
+
 #include <asset/image.hpp>
 #include <asset/model.hpp>
 
@@ -53,6 +55,13 @@ struct RenderableComponent
 struct GameObject
 {
 public:
+    GameObject() {
+        MemoryTracker::Push(MemoryDomain::SCENE, sizeof(GameObject));
+    }
+    ~GameObject() {
+        MemoryTracker::Pop(MemoryDomain::SCENE, sizeof(GameObject));
+    }
+
     std::string Name = "Entity";
 
     glm::vec3 Position = glm::vec3(0.0f);

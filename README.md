@@ -33,6 +33,7 @@ xmake run
 
 - Renderer:
     - FXAA does not work
+    - Texture memory tracking seems to be inaccurate
 
 ## Roadmap (Unordered)
 

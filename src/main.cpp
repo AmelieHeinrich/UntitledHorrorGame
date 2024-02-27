@@ -20,6 +20,7 @@ struct caca
 int main(void)
 {
     Logger::Init();
+    MemoryTracker::Init();
 
     // Load config
     state.config = FileSystem::ParseJSON("gamedata/game_settings.json");
@@ -80,6 +81,7 @@ int main(void)
         // ImGui
         RenderContext::SetViewport(state.width, state.height);
         RenderContext::BindRenderTarget(RenderContext::GetBackBuffer());
+
         RenderContext::BeginUI();
         state.editorFocused = SceneEditor::Manipulate(scene);
         RenderContext::EndUI();

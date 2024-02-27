@@ -26,10 +26,14 @@ Buffer::Buffer(i64 size, i64 stride, BufferType type)
     if (FAILED(result)) {
         LOG_ERROR("Failed to create buffer!");
     }
+
+    MemoryTracker::Push(MemoryDomain::BUFFERS, size);
 }
 
 Buffer::~Buffer()
 {
+    MemoryTracker::Pop(MemoryDomain::BUFFERS, _Size);
+
     SafeRelease(_UAV);
     SafeRelease(_Buffer);
 }

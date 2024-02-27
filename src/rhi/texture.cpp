@@ -9,8 +9,10 @@
 #include <core/logger.hpp>
 
 Texture::Texture(TextureType type, TextureLayout layout, int width, int height, DXGI_FORMAT format, bool mips)
-    : _Width(width), _Height(height), _Type(type), _Format(format), _Mips(mips)
+    : _Width(width), _Height(height), _Type(type), _Format(format), _Mips(mips), _Layout(layout)
 {
+    ComputeTextureSize();    
+
     D3D11_TEXTURE2D_DESC desc {};
     desc.Width = width;
     desc.Height = height;
@@ -22,14 +24,19 @@ Texture::Texture(TextureType type, TextureLayout layout, int width, int height, 
     desc.MipLevels = 1;
     if (type == TextureType::CubeMap)
         desc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+        MemoryTracker::Push(MemoryDomain::TEXTURES, _Width * _Height * 4 * 6);
     if (layout == TextureLayout::Staging) {
         desc.BindFlags = 0;
         desc.Usage = D3D11_USAGE_STAGING;
         desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ;
+        MemoryTracker::Push(MemoryDomain::TEXTURES, _Width * _Height * 4);
     }
     if (_Mips) {
         desc.MipLevels = 0;
         desc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
+    }
+    if (layout == TextureLayout::MippedTexture) {
+        MemoryTracker::Push(MemoryDomain::TEXTURES, _Size);
     }
 
     HRESULT result = RenderContext::Device()->CreateTexture2D(&desc, nullptr, &_Texture);
@@ -40,6 +47,9 @@ Texture::Texture(TextureType type, TextureLayout layout, int width, int height, 
 
 Texture::~Texture()
 {
+    if (_Layout == TextureLayout::MippedTexture) {
+        MemoryTracker::Pop(MemoryDomain::TEXTURES, _Size);
+    }
     SafeRelease(_Texture);
 }
 
@@ -125,4 +135,22 @@ Ref<Texture> Texture::CreateFromImage(const Image& image)
     gpu_resident->MakeShaderResource();
 
     return gpu_resident;
+}
+
+void Texture::ComputeTextureSize()
+{
+    i32 textureCount = _Type == TextureType::TwoDimension ? 1 : 6;
+
+    switch (_Format)
+    {
+        case DXGI_FORMAT_R8G8B8A8_UNORM: {
+            _Size = _Width * _Height * 4;
+            break;
+        }
+        case DXGI_FORMAT_R32G32B32A32_FLOAT: {
+            _Size = _Width * _Height * 16;
+            break;
+        }
+    }
+    _Size *= textureCount;
 }
