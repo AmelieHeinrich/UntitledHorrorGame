@@ -8,8 +8,8 @@
 #include <asset/image.hpp>
 #include <asset/model.hpp>
 
-#include <renderer/buffer.hpp>
-#include <renderer/texture.hpp>
+#include <rhi/buffer.hpp>
+#include <rhi/texture.hpp>
 
 #include <glm/glm.hpp>
 

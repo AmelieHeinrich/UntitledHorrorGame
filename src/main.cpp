@@ -37,8 +37,14 @@ int main(void)
     RenderContext::AttachWindow(state.window);
     RenderContext::InitImGui();
 
-    // Create scene renderer
-    state.sceneRenderer = CreateRef<SceneRenderer>();
+    // Create render graph
+    state.graph = CreateRef<RenderGraph>();
+    state.graph->PushNode(CreateRef<ForwardNode>());
+    state.graph->PushNode(CreateRef<FXAANode>(state.graph->GetNode("Forward Pass")->GetFinalOutput()));
+    state.graph->PushNode(CreateRef<CompositeNode>(state.graph->GetNode("FXAA Pass")->GetFinalOutput()));
+
+    // TODO(ahi): Fix FXAA!!
+    state.graph->GetNode("FXAA Pass")->Enable(false);
 
     // Initialize physics
     PhysicsSystem::Init();
@@ -69,20 +75,16 @@ int main(void)
         scene->Update(dt);
 
         // Render Loop
-        state.sceneRenderer->Render(scene);
-        Ref<Texture> swapChainTexture = RenderContext::GetBackBuffer();
-        Ref<Texture> compositionTexture = state.sceneRenderer->CompositionTexture();
-        RenderContext::CopyTextureToTexture(swapChainTexture, compositionTexture);
+        state.graph->Render(scene);
 
         // ImGui
         RenderContext::SetViewport(state.width, state.height);
-        RenderContext::BindRenderTarget(swapChainTexture);
-        // Don't clear!!
-
+        RenderContext::BindRenderTarget(RenderContext::GetBackBuffer());
         RenderContext::BeginUI();
         state.editorFocused = SceneEditor::Manipulate(scene);
         RenderContext::EndUI();
 
+        // Present
         RenderContext::Present(vsync);
 
         // Clean

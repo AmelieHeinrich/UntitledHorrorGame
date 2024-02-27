@@ -20,20 +20,25 @@
 #include "game/free_camera.hpp"
 #include "game/game_object.hpp"
 #include "game/scene.hpp"
-#include "game/scene_renderer.hpp"
 #include "game/scene_serializer.hpp"
 #include "game/scene_editor.hpp"
 #include "game/reload_queue.hpp"
 
 #include "physics/physics_system.hpp"
 
-#include "renderer/context.hpp"
-#include "renderer/texture.hpp"
-#include "renderer/shader.hpp"
-#include "renderer/graphics_pipeline.hpp"
-#include "renderer/compute_pipeline.hpp"
-#include "renderer/sampler.hpp"
-#include "renderer/buffer.hpp"
+#include "renderer/render_graph.hpp"
+#include "renderer/render_node.hpp"
+#include "renderer/nodes/forward_node.hpp"
+#include "renderer/nodes/fxaa_node.hpp"
+#include "renderer/nodes/composite_node.hpp"
+
+#include "rhi/context.hpp"
+#include "rhi/texture.hpp"
+#include "rhi/shader.hpp"
+#include "rhi/graphics_pipeline.hpp"
+#include "rhi/compute_pipeline.hpp"
+#include "rhi/sampler.hpp"
+#include "rhi/buffer.hpp"
 
 #include "util/file_dialog.hpp"
 
@@ -45,7 +50,7 @@ struct GameState
     i32 height;
     Ref<Window> window;
 
-    Ref<SceneRenderer> sceneRenderer;
+    Ref<RenderGraph> graph;
     bool editorFocused;
     bool fullscreen = false;
 

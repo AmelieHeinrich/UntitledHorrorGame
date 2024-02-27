@@ -9,7 +9,7 @@
 #include "game.hpp"
 
 #include <game.hpp>
-#include <renderer/context.hpp>
+#include <rhi/context.hpp>
 
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3native.h>

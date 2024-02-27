@@ -25,6 +25,11 @@ xmake run
 - Scene editor through ImGui, ImGuizmo
 - Free Camera to navigate through the world
 
+## Bugs
+
+- Renderer:
+    - FXAA does not work
+
 ## Roadmap (Unordered)
 
 - Physics:
@@ -43,9 +48,7 @@ xmake run
     - Forward+ or deferred
     - Skybox
     - Eye adaptation
-    - Color correction, tonemapping
     - Instancing
-    - Anti-aliasing
     - Fog (toggable for open/closed maps)
     - Screen space ambient occlusion
     - Bloom

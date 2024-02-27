@@ -32,6 +32,8 @@ void PhysicsSystem::Init()
     JPH::Trace = TraceImpl;
     JPH::Factory::sInstance = new JPH::Factory;
     JPH::RegisterTypes();
+
+    LOG_INFO("Physics system initialized correctly.");
 }
 
 void PhysicsSystem::Exit()

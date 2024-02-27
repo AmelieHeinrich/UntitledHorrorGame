@@ -169,7 +169,7 @@
             ]
         },
         {
-            "albedoPath": "gamedata/assets/textures/test_texture.png",
+            "albedoPath": "gamedata/assets/textures/facade.jpg",
             "modelPath": "gamedata/assets/models/Cube.gltf",
             "name": "Wall 1",
             "position": [
@@ -184,18 +184,18 @@
                 179.99989318847656
             ],
             "scale": [
-                14.98758602142334,
+                14.976523399353027,
                 0.09999731928110123,
                 10.0
             ]
         },
         {
-            "albedoPath": "gamedata/assets/textures/test_texture.png",
+            "albedoPath": "gamedata/assets/textures/facade.jpg",
             "modelPath": "gamedata/assets/models/Cube.gltf",
             "name": "Wall 2",
             "position": [
                 15.00555419921875,
-                7.704283714294434,
+                7.481914043426514,
                 -0.013162851333618164
             ],
             "renderable": true,
@@ -205,13 +205,13 @@
                 -179.999755859375
             ],
             "scale": [
-                14.984987258911133,
+                14.983811378479004,
                 0.09999733418226242,
                 10.0
             ]
         },
         {
-            "albedoPath": "gamedata/assets/textures/test_texture.png",
+            "albedoPath": "gamedata/assets/textures/facade.jpg",
             "modelPath": "gamedata/assets/models/Cube.gltf",
             "name": "Wall 3",
             "position": [
@@ -226,18 +226,18 @@
                 -179.999755859375
             ],
             "scale": [
-                14.983282089233398,
+                14.982590675354004,
                 0.09999733418226242,
                 10.0
             ]
         },
         {
-            "albedoPath": "gamedata/assets/textures/test_texture.png",
+            "albedoPath": "gamedata/assets/textures/facade.jpg",
             "modelPath": "gamedata/assets/models/Cube.gltf",
             "name": "Wall 4",
             "position": [
                 0.0,
-                7.7105231285095215,
+                7.61401891708374,
                 14.967363357543945
             ],
             "renderable": true,
@@ -247,7 +247,7 @@
                 179.99989318847656
             ],
             "scale": [
-                14.987303733825684,
+                14.986390113830566,
                 0.09999731928110123,
                 10.0
             ]

@@ -21,6 +21,8 @@ public:
     void AddObject(GameObject *object);
     void RemoveObject(GameObject *object);
 
+    FreeCamera& GetCamera() { return _Camera; }
+    std::vector<GameObject*>& GetObjects() { return _Objects; }
     std::string GetPath() { return _Path; }
 private:
     friend class SceneSerializer;
