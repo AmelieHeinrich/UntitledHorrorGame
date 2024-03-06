@@ -29,8 +29,6 @@ private:
     friend class SceneRenderer;
     friend class SceneEditor;
 
-    GameObject* AllocateGameObject();
-
     std::string _Name = "";
     std::string _Path = "";
     FreeCamera _Camera;

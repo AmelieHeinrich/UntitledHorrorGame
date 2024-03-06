@@ -127,13 +127,13 @@ void Texture::MakeUnorderedAccess()
 
 Ref<Texture> Texture::CreateFromImage(const Image& image)
 {
-    Ref<Texture> staging = CreateRef<Texture>(TextureType::TwoDimension, TextureLayout::Staging, image.Width, image.Height, DXGI_FORMAT_R8G8B8A8_UNORM);
-    staging->Upload(image.Bytes, image.Width * image.Height * 4);
-
-    Ref<Texture> gpu_resident = CreateRef<Texture>(TextureType::TwoDimension, TextureLayout::MippedTexture, image.Width, image.Height, DXGI_FORMAT_R8G8B8A8_UNORM);
-    RenderContext::CopyTextureToTexture(gpu_resident, staging);
+    Ref<Texture> gpu_resident = CreateRef<Texture>(TextureType::TwoDimension,
+                                                       TextureLayout::MippedTexture,
+                                                       image.Width, image.Height,
+                                                       DXGI_FORMAT_R8G8B8A8_UNORM,
+                                                       true);
+    RenderContext::Context()->UpdateSubresource(gpu_resident->_Texture, 0, nullptr, image.Bytes, 4 * image.Width, 0);
     gpu_resident->MakeShaderResource();
-
     return gpu_resident;
 }
 

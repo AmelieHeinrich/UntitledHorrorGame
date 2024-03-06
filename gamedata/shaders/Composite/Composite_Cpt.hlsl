@@ -39,7 +39,7 @@ void main(uint3 ThreadID : SV_DispatchThreadID)
     {
         float4 HDRColor = HDRTexture[ThreadID.xy];
         float3 MappedColor = HDRColor.xyz;
-        MappedColor = ACESFilm(MappedColor);
+        MappedColor = RomBinDaHouse(MappedColor);
         LDRTexture[ThreadID.xy] = float4(MappedColor, HDRColor.a);
     }
 }
